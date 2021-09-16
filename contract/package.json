@@ -1,0 +1,14 @@
+{
+  "name": "contract",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.3.1",
+    "ethers": "^5.4.6",
+    "solc": "^0.8.2",
+    "swarm-js": "^0.1.40"
+  }
+}
