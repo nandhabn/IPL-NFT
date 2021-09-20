@@ -1,4 +1,4 @@
-import { notification } from "antd";
+import { Input, notification } from "antd";
 import { get, isEmpty, isNumber } from "lodash";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
@@ -67,7 +67,7 @@ export const CreateMomentSale = ({ imgSrc, tokenId }) => {
       <img src={imgSrc} alt="" />
       {isSaleViewOpen ? (
         <div>
-          <input
+          <Input
             onChange={(e) => setPrice(Number(e.target.value))}
             type="number"
             placeholder="Price"

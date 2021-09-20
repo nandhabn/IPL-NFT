@@ -2,6 +2,8 @@
 pragma solidity ^0.8.2;
 
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
+
 import "./MomentAccessControl.sol";
 
 contract IPLMoments is IERC721, MomentAccessControl {
@@ -36,29 +38,33 @@ contract IPLMoments is IERC721, MomentAccessControl {
         return _symbol;
     }
 
-    function createMoment(string memory _url, uint8 tokenType)
-        public
-        onlyMinter
+    // function createMoment(string memory _url, uint8 tokenType)
+    //     public
+    //     onlyMinter
+    // {
+    //     uint8 momentId = 1;
+    //     Moment memory moment = Moment({
+    //         url: _url,
+    //         seriesId: seriesId,
+    //         momentId: momentId,
+    //         tokenType: tokenType
+    //     });
+    //     _mint(moment, minter());
+    // }
+
+    function _mint(Moment memory moment, address receiver)
+        internal
+        returns (uint256)
     {
-        uint256 momentId;
-        uint256 tokenCount = 0;
-        // uint256 totalCount =
-        for (; tokenCount < 0; tokenCount++) {
-            Moment memory newMoment = Moment({
-                seriesId: seriesId,
-                url: _url,
-                tokenType: tokenType,
-                momentId: momentId
-            });
-            moments.push(newMoment);
-            uint256 newTokenId = moments.length - 1;
-            momentsOwners[newTokenId] = minter();
+        moments.push(moment);
+        uint256 newTokenId = moments.length - 1;
+        momentsOwners[newTokenId] = receiver;
 
-            _totalSupply++;
-            ownershipTokenCount[minter()]++;
-        }
+        _totalSupply++;
+        ownershipTokenCount[minter()]++;
 
-        emit momentCreated(seriesId, _url, momentId);
+        emit momentCreated(seriesId, moment.url, moment.momentId);
+        return newTokenId;
     }
 
     function startNextSeries() public {
@@ -189,7 +195,7 @@ contract IPLMoments is IERC721, MomentAccessControl {
         address _from,
         address _to,
         uint256 _tokenId
-    ) public virtual override(IERC721) onlyMinter {
+    ) public virtual override(IERC721) {
         require(_isApprovedOrOwner(_from, _tokenId), "User not autorized");
         _transfer(_from, _to, _tokenId);
         emit Transfer(_from, _to, _tokenId);
@@ -223,4 +229,35 @@ contract IPLMoments is IERC721, MomentAccessControl {
         uint256 tokenId,
         bytes calldata data
     ) public override {}
+
+    function mintAndTransfer(
+        address account,
+        Moment memory moment,
+        bytes calldata signature
+    ) external {
+        require(
+            _verify(_hash(account, moment), signature),
+            "Invalid signature"
+        );
+        _mint(moment, account);
+    }
+
+    function _hash(address account, Moment memory moment)
+        internal
+        pure
+        returns (bytes32)
+    {
+        return
+            ECDSA.toEthSignedMessageHash(
+                keccak256(abi.encode(account, moment))
+            );
+    }
+
+    function _verify(bytes32 digest, bytes memory signature)
+        internal
+        view
+        returns (bool)
+    {
+        return minter() == ECDSA.recover(digest, signature);
+    }
 }
