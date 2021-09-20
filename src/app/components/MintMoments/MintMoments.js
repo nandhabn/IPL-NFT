@@ -2,11 +2,18 @@ import { Button, Input, Row } from "antd";
 import { get, isEmpty } from "lodash";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import { selectAccounts, selectContracts } from "../../app.selector";
+import {
+  selectAccounts,
+  selectContracts,
+  selectProvider,
+} from "../../app.selector";
+import { contractIds } from "../../../utils/constans.json";
+import { ethers } from "ethers";
 
 export const MintMoments = ({ owner }) => {
   const contract = useSelector(selectContracts);
   const accounts = useSelector(selectAccounts);
+  const provider = useSelector(selectProvider);
 
   const [momentUrl, setMomentUrl] = useState("");
   const [playerName, setPlayerName] = useState("");
