@@ -13,6 +13,7 @@ contract IPLMoments is IERC721, MomentAccessControl {
         string url;
         uint256 momentId;
         uint8 tokenType;
+        string playerName;
     }
 
     Moment[] internal moments;
@@ -24,7 +25,12 @@ contract IPLMoments is IERC721, MomentAccessControl {
     mapping(uint256 => address) private _tokenApprovals;
     mapping(address => mapping(address => bool)) private _operatorApprovals;
 
-    mapping(uint8 => uint256) private _tokenType;
+    uint16[4] _tokenType = [
+        60000, // common
+        1000, //   rare
+        10, //     epic
+        3 //       Legendary
+    ];
 
     event momentCreated(uint256 seriesId, string url, uint256 tokenId);
 
@@ -36,29 +42,36 @@ contract IPLMoments is IERC721, MomentAccessControl {
         return _symbol;
     }
 
-    function createMoment(string memory _url, uint8 tokenType)
-        public
-        onlyMinter
-    {
-        uint256 momentId;
-        uint256 tokenCount = 0;
-        // uint256 totalCount =
-        for (; tokenCount < 0; tokenCount++) {
-            Moment memory newMoment = Moment({
-                seriesId: seriesId,
-                url: _url,
-                tokenType: tokenType,
-                momentId: momentId
-            });
-            moments.push(newMoment);
-            uint256 newTokenId = moments.length - 1;
-            momentsOwners[newTokenId] = minter();
+    function createMoment(
+        string memory _url,
+        string memory playerName,
+        uint8 momentType
+    ) public onlyMinter {
+        _mint(_url, playerName, momentType);
+    }
 
-            _totalSupply++;
-            ownershipTokenCount[minter()]++;
-        }
+    function _mint(
+        string memory _url,
+        string memory playerName,
+        uint8 momentType
+    ) internal {
+        require(momentType < 4, "Invalid moment type");
 
-        emit momentCreated(seriesId, _url, momentId);
+        Moment memory newMoment = Moment({
+            seriesId: seriesId,
+            url: _url,
+            tokenType: momentType,
+            momentId: 10,
+            playerName: playerName
+        });
+        moments.push(newMoment);
+        uint256 newTokenId = moments.length - 1;
+        momentsOwners[newTokenId] = minter();
+
+        _totalSupply++;
+        ownershipTokenCount[minter()]++;
+
+        emit momentCreated(seriesId, _url, 10);
     }
 
     function startNextSeries() public {

@@ -1,11 +1,10 @@
-import { notification } from "antd";
+import { Button, Card, Input, notification } from "antd";
 import { get, isEmpty, isNumber } from "lodash";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { selectAccounts, selectContracts } from "../../app.selector";
-import { CloseCircleOutlined } from "@ant-design/icons";
 
-export const CreateMomentSale = ({ imgSrc, tokenId }) => {
+export const CreateMomentSale = ({ imgSrc, tokenId, playerName }) => {
   const contract = useSelector(selectContracts);
   const accounts = useSelector(selectAccounts);
   const [newSaleId, setSaleId] = useState();
@@ -38,7 +37,7 @@ export const CreateMomentSale = ({ imgSrc, tokenId }) => {
       setSaleId(newSaleId);
       console.log(newSaleId);
     } catch (e) {
-      openNotification(e.message);
+      openNotification(e.data?.message.split("revert")[1] ?? e.message);
       console.log(e.message);
     } finally {
       setLoading(false);
@@ -58,27 +57,39 @@ export const CreateMomentSale = ({ imgSrc, tokenId }) => {
     }
   };
 
+  const validateInput = (e) => {
+    setPrice(Number(e.target.value));
+  };
+
   if (isLoading) {
-    return <>Creating sale</>;
+    return <Card>Creating sale</Card>;
   }
 
   return (
-    <>
-      <img src={imgSrc} alt="" />
+    <Card
+      cover={<img src={imgSrc} alt="" />}
+      className="p-3 m-2"
+      style={{ width: 300 }}
+    >
+      <div className="my-2">Player name: {playerName}</div>
       {isSaleViewOpen ? (
-        <div>
-          <input
-            onChange={(e) => setPrice(Number(e.target.value))}
-            type="number"
-            placeholder="Price"
-            min={0}
-          />
-          <button onClick={createSale}>Confirm</button>
-          <CloseCircleOutlined onClick={() => openCloseSaleView(false)} />
+        <div className="col">
+          <div className="col">
+            <Input
+              onChange={validateInput}
+              type="number"
+              placeholder="Price"
+              min={0}
+            />
+          </div>
+          <Button onClick={createSale}>Confirm</Button>
+          <Button onClick={() => openCloseSaleView(false)} danger>
+            Cancel
+          </Button>
         </div>
       ) : (
-        <button onClick={() => openCloseSaleView(true)}>Add to sale</button>
+        <Button onClick={() => openCloseSaleView(true)}>Add to sale</Button>
       )}
-    </>
+    </Card>
   );
 };

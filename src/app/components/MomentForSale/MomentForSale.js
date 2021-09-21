@@ -1,13 +1,14 @@
-import { Col, Row } from "antd";
+import { Card, Row } from "antd";
 import { isEmpty } from "lodash";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { selectContracts } from "../../app.selector";
+import { selectAccounts, selectContracts } from "../../app.selector";
 import { notification } from "antd";
-import { BuyMoment } from "../TransferToken/BuyMoment";
+import { BuyMomentOrEndSale } from "../TransferToken/BuyMoment";
 
 export const MomentForSale = () => {
   const contract = useSelector(selectContracts);
+  const accounts = useSelector(selectAccounts);
 
   const [saleData, setSaleData] = useState([]);
 
@@ -20,9 +21,10 @@ export const MomentForSale = () => {
           const sale = await contract.IPLM.getSaleById(i);
           const token = await contract.IPLM.getMomentById(sale[2]);
           sales.push({
+            seller: sale["seller"],
             price: Number(sale[1]._hex),
             tokenId: Number(sale[2]._hex),
-            saleId: Number(sale[3]._hex),
+            saleId: Number(sale["saleId"]._hex),
             tokenUrl: token[1],
             saleDone: sale[4],
           });
@@ -43,38 +45,44 @@ export const MomentForSale = () => {
       message,
     });
   };
-
   return (
     <Row>
       {saleData.map((sale) => (
-        <Col key={sale.saleId}>
-          <img src={sale.tokenUrl} alt="" />
-          <table>
+        <Card
+          key={sale.saleId}
+          cover={<img src={sale.tokenUrl} alt="" />}
+          className="m-1 p-3"
+          style={{ width: "300px" }}
+        >
+          <table className="align-items-center">
             <tbody>
               <tr>
-                <td>Token Id</td>
-                <td> {sale.tokenId}</td>
+                <th colSpan="2">Token Id </th>
+                <td colSpan="1">#{sale.tokenId}</td>
               </tr>
               <tr>
-                <td>Sale Id</td>
-                <td>{sale.tokenId}</td>
+                <td colSpan="2">Sale Id</td>
+                <td colSpan="1">{sale.saleId}</td>
               </tr>
               <tr>
-                <td>Price</td>
-                <td>{sale.price}</td>
+                <td colSpan="2">Price</td>
+                <td colSpan="1">{sale.price}</td>
               </tr>
               <tr>
-                <td>Sale</td>
-                <td>{sale.saleDone ? "Done" : "Availabe"}</td>
+                <td colSpan="2">Sale</td>
+                <td colSpan="1">{sale.saleDone ? "Done" : "Availabe"}</td>
               </tr>
               {!sale.saleDone && (
                 <tr>
-                  <BuyMoment saleId={sale.saleId} />
+                  <BuyMomentOrEndSale
+                    saleId={sale.saleId}
+                    buyToken={Number(accounts.data[0]) !== Number(sale.seller)}
+                  />
                 </tr>
               )}
             </tbody>
           </table>
-        </Col>
+        </Card>
       ))}
     </Row>
   );

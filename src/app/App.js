@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { appReducer, fetchAccountDetails } from "./App.slice";
 import { useInjectReducer, useInjectSaga } from "redux-injectors";
 
 import appSaga from "./App.saga";
 import { isEmpty } from "lodash";
-import { Layout, Menu } from "antd";
+import { Layout, Menu, Row } from "antd";
 import { Link, BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { Home } from "./container/Home/Home";
 import { MarketPlace } from "./container/MarketPlace/MarketPlace";
 import { MintMoments } from "./components/MintMoments/MintMoments";
+import { selectContracts } from "./app.selector";
 
 const { Content, Sider, Header } = Layout;
 
@@ -35,7 +36,10 @@ function App() {
   useInjectSaga({ key: "app", saga: appSaga });
 
   const [isLoading, setLoading] = useState(true);
+  const [owner, setOwner] = useState("");
+
   const accounts = useAccounts();
+  const contracts = useSelector(selectContracts);
 
   const dispatch = useDispatch();
 
@@ -49,6 +53,15 @@ function App() {
     }
   }, [dispatch, accounts]);
 
+  useEffect(() => {
+    (async () => {
+      if (!isEmpty(contracts)) {
+        const owner = await contracts.IPLM.owner();
+        setOwner(owner);
+      }
+    })();
+  });
+
   if (isLoading) {
     return <>Fetching wallet</>;
   }
@@ -57,14 +70,33 @@ function App() {
     <Layout className="App">
       <Header>
         <div className="container-fluid">
-          <div className="row justify-content-between">
-            <div className="col-lg-1">
-              <p className="logo" style={{ color: "white" }}>
-                IPL Moments
+          <Row className="row justify-content-between">
+            <div className="col-5">
+              <p className="logo" style={{ color: "white", fontSize: "15px" }}>
+                <img
+                  alt=""
+                  src="../../public/IPL-Logo.png"
+                  style={{ width: "20px" }}
+                />{" "}
+                Moments
               </p>
             </div>
-            <MintMoments />
-          </div>
+            <MintMoments owner={owner} />
+            <div className="col-1 align-content-center">
+              <p
+                style={{
+                  background: "white",
+                  borderRadius: "50px",
+                  height: "30px",
+                  lineHeight: "30px",
+                  padding: "0 5px",
+                  margin: "25px 0",
+                }}
+              >
+                {accounts[0].slice(0, 6) + "..." + accounts[0].slice(-4)}
+              </p>
+            </div>
+          </Row>
         </div>
       </Header>
       <Layout>
