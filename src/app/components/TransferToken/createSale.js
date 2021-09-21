@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { selectAccounts, selectContracts } from "../../app.selector";
 
-export const CreateMomentSale = ({ imgSrc, tokenId }) => {
+export const CreateMomentSale = ({ imgSrc, tokenId, playerName }) => {
   const contract = useSelector(selectContracts);
   const accounts = useSelector(selectAccounts);
   const [newSaleId, setSaleId] = useState();
@@ -37,7 +37,7 @@ export const CreateMomentSale = ({ imgSrc, tokenId }) => {
       setSaleId(newSaleId);
       console.log(newSaleId);
     } catch (e) {
-      openNotification(e.message);
+      openNotification(e.data?.message.split("revert")[1] ?? e.message);
       console.log(e.message);
     } finally {
       setLoading(false);
@@ -71,9 +71,10 @@ export const CreateMomentSale = ({ imgSrc, tokenId }) => {
       className="p-3 m-2"
       style={{ width: 300 }}
     >
+      <div className="my-2">Player name: {playerName}</div>
       {isSaleViewOpen ? (
         <div className="col">
-          <div className="col-4">
+          <div className="col">
             <Input
               onChange={validateInput}
               type="number"

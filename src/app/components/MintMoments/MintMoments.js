@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { selectAccounts, selectContracts } from "../../app.selector";
 
-export const MintMoments = () => {
+export const MintMoments = ({ owner }) => {
   const contract = useSelector(selectContracts);
   const accounts = useSelector(selectAccounts);
 
@@ -33,23 +33,27 @@ export const MintMoments = () => {
 
   return (
     <Row className="col-6 align-content-center">
-      <Row className="col-6 align-content-center">
-        <Input
-          className="col me-2"
-          onChange={handlePlayerNameChange}
-          value={playerName}
-          placeholder="Player name"
-        />
-        <Input
-          className="col"
-          onChange={onMomentUrlChange}
-          value={momentUrl}
-          placeholder="Moment url"
-        />
-      </Row>
-      <Button className="ms-2" onClick={mintMoment}>
-        Mint moment
-      </Button>
+      {Number(owner) === Number(accounts.data[0]) && (
+        <>
+          <Row className="col-6 align-content-center">
+            <Input
+              className="col me-2"
+              onChange={handlePlayerNameChange}
+              value={playerName}
+              placeholder="Player name"
+            />
+            <Input
+              className="col"
+              onChange={onMomentUrlChange}
+              value={momentUrl}
+              placeholder="Moment url"
+            />
+          </Row>
+          <Button className="ms-2" onClick={mintMoment}>
+            Mint moment
+          </Button>
+        </>
+      )}
     </Row>
   );
 };

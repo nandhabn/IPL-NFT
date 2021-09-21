@@ -19,7 +19,11 @@ export const DisplayMoments = () => {
           index
         );
         const metaData = await contract.IPLM.getMomentById(tokenId);
-        return { tokenId: Number(tokenId._hex), metaData: metaData[1] };
+        return {
+          tokenId: Number(tokenId._hex),
+          metaData: metaData[1],
+          playerName: metaData["playerName"],
+        };
       }
     );
     return tokens;
@@ -41,6 +45,7 @@ export const DisplayMoments = () => {
         <CreateMomentSale
           imgSrc={token.metaData}
           tokenId={token.tokenId}
+          playerName={token.playerName}
           key={token.tokenId}
         />
       ))}

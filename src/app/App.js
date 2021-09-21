@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { appReducer, fetchAccountDetails } from "./App.slice";
 import { useInjectReducer, useInjectSaga } from "redux-injectors";
 
@@ -10,6 +10,8 @@ import { Link, BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { Home } from "./container/Home/Home";
 import { MarketPlace } from "./container/MarketPlace/MarketPlace";
 import { MintMoments } from "./components/MintMoments/MintMoments";
+import { selectContracts } from "./app.selector";
+import {} from "ipfs-car";
 
 const { Content, Sider, Header } = Layout;
 
@@ -35,7 +37,10 @@ function App() {
   useInjectSaga({ key: "app", saga: appSaga });
 
   const [isLoading, setLoading] = useState(true);
+  const [owner, setOwner] = useState("");
+
   const accounts = useAccounts();
+  const contracts = useSelector(selectContracts);
 
   const dispatch = useDispatch();
 
@@ -49,6 +54,15 @@ function App() {
     }
   }, [dispatch, accounts]);
 
+  useEffect(() => {
+    (async () => {
+      if (!isEmpty(contracts)) {
+        const owner = await contracts.IPLM.owner();
+        setOwner(owner);
+      }
+    })();
+  });
+
   if (isLoading) {
     return <>Fetching wallet</>;
   }
@@ -60,10 +74,15 @@ function App() {
           <Row className="row justify-content-between">
             <div className="col-5">
               <p className="logo" style={{ color: "white", fontSize: "15px" }}>
-                IPL Moments
+                <img
+                  alt=""
+                  src="../../public/IPL-Logo.png"
+                  style={{ width: "20px" }}
+                />{" "}
+                Moments
               </p>
             </div>
-            <MintMoments />
+            <MintMoments owner={owner} />
             <div className="col-1 align-content-center">
               <p
                 style={{
