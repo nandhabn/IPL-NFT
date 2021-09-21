@@ -25,7 +25,12 @@ contract IPLMoments is IERC721, MomentAccessControl {
     mapping(uint256 => address) private _tokenApprovals;
     mapping(address => mapping(address => bool)) private _operatorApprovals;
 
-    mapping(uint8 => uint256) private _tokenType;
+    uint16[4] _tokenType = [
+        60000, // common
+        1000, //   rare
+        10, //     epic
+        3 //       Legendary
+    ];
 
     event momentCreated(uint256 seriesId, string url, uint256 tokenId);
 
@@ -37,14 +42,25 @@ contract IPLMoments is IERC721, MomentAccessControl {
         return _symbol;
     }
 
-    function createMoment(string memory _url, string memory playerName)
-        public
-        onlyMinter
-    {
+    function createMoment(
+        string memory _url,
+        string memory playerName,
+        uint8 momentType
+    ) public onlyMinter {
+        _mint(_url, playerName, momentType);
+    }
+
+    function _mint(
+        string memory _url,
+        string memory playerName,
+        uint8 momentType
+    ) internal {
+        require(momentType < 4, "Invalid moment type");
+
         Moment memory newMoment = Moment({
             seriesId: seriesId,
             url: _url,
-            tokenType: 9,
+            tokenType: momentType,
             momentId: 10,
             playerName: playerName
         });
