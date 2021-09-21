@@ -13,6 +13,7 @@ contract IPLMoments is IERC721, MomentAccessControl {
         string url;
         uint256 momentId;
         uint8 tokenType;
+        string playerName;
     }
 
     Moment[] internal moments;
@@ -36,29 +37,25 @@ contract IPLMoments is IERC721, MomentAccessControl {
         return _symbol;
     }
 
-    function createMoment(string memory _url, uint8 tokenType)
+    function createMoment(string memory _url, string memory playerName)
         public
         onlyMinter
     {
-        uint256 momentId;
-        uint256 tokenCount = 0;
-        // uint256 totalCount =
-        for (; tokenCount < 0; tokenCount++) {
-            Moment memory newMoment = Moment({
-                seriesId: seriesId,
-                url: _url,
-                tokenType: tokenType,
-                momentId: momentId
-            });
-            moments.push(newMoment);
-            uint256 newTokenId = moments.length - 1;
-            momentsOwners[newTokenId] = minter();
+        Moment memory newMoment = Moment({
+            seriesId: seriesId,
+            url: _url,
+            tokenType: 9,
+            momentId: 10,
+            playerName: playerName
+        });
+        moments.push(newMoment);
+        uint256 newTokenId = moments.length - 1;
+        momentsOwners[newTokenId] = minter();
 
-            _totalSupply++;
-            ownershipTokenCount[minter()]++;
-        }
+        _totalSupply++;
+        ownershipTokenCount[minter()]++;
 
-        emit momentCreated(seriesId, _url, momentId);
+        emit momentCreated(seriesId, _url, 10);
     }
 
     function startNextSeries() public {

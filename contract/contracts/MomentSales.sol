@@ -57,6 +57,12 @@ contract MomentSale is IPLMoments {
 
     function buyMoment(uint256 saleId) public {
         Sale memory saleData = getSaleById(saleId);
+
+        require(
+            ownerOf(saleData.tokenId) != _msgSender(),
+            "Owner can not buy moment"
+        );
+
         require(!saleData.saleDone, "Buy moment Failed");
 
         IPLT.transferFrom(_msgSender(), saleData.seller, saleData.price);
@@ -79,6 +85,17 @@ contract MomentSale is IPLMoments {
             }
         }
         return false;
+    }
+
+    function endSale(uint256 saleId) public {
+        Sale memory sale = sales[saleId];
+
+        require(
+            ownerOf(sale.tokenId) == _msgSender(),
+            "Unauthorized action: Token owner can only end sale"
+        );
+
+        _endSale(saleId);
     }
 
     function _endSale(uint256 saleId) internal {

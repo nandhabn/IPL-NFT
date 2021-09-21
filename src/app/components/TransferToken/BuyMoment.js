@@ -1,4 +1,4 @@
-import { notification, Row } from "antd";
+import { Button, notification, Row } from "antd";
 import React from "react";
 import { useSelector } from "react-redux";
 import {
@@ -9,7 +9,7 @@ import {
 import { contractIds } from "../../../utils/constans.json";
 import { isNumber } from "lodash";
 
-export const BuyMoment = ({ saleId }) => {
+export const BuyMomentOrEndSale = ({ saleId, buyToken }) => {
   const contract = useSelector(selectContracts);
   const provider = useSelector(selectProvider);
   const accounts = useSelector(selectAccounts);
@@ -23,6 +23,7 @@ export const BuyMoment = ({ saleId }) => {
       const sale = await contract.IPLM.getSaleById(saleId);
       const price = Number(sale[1]._hex);
       if (price > tokenBalance) {
+        console.log(tokenBalance, sale, price);
         openNotification("Insufficiant tokens in your account");
         return;
       }
@@ -33,13 +34,6 @@ export const BuyMoment = ({ saleId }) => {
       );
       allowance = Number(allowance._hex);
 
-      console.log(
-        tokenBalance,
-        sale,
-        contractIds.IPLMoments,
-        Number(sale[1]._hex),
-        allowance
-      );
       if (allowance < price) {
         const txHash = await contract.IPLT.approve(contractIds.IPLMoments, 100);
         provider.once(txHash.hash, async () => {
@@ -61,6 +55,13 @@ export const BuyMoment = ({ saleId }) => {
     });
   };
 
+  const endSale = async () => {
+    const tx = await contract.IPLM.endSale(saleId);
+    provider.once(tx.hash, async () => {
+      openNotification("Sale has been ended");
+    });
+  };
+
   const openNotification = (message) => {
     notification.open({
       message,
@@ -68,8 +69,10 @@ export const BuyMoment = ({ saleId }) => {
   };
 
   return (
-    <Row>
-      <button onClick={buyMomentToken}>Buy Moment</button>
+    <Row className="mt-2 align-items-center">
+      <Button onClick={buyToken ? buyMomentToken : endSale} danger={!buyToken}>
+        {buyToken ? "Buy Moment" : "End sale"}
+      </Button>
     </Row>
   );
 };

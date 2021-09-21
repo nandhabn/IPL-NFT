@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { selectAccounts, selectContracts } from "../../app.selector";
-import { Col, Row } from "antd";
+import { Row } from "antd";
 import { CreateMomentSale } from "../TransferToken/createSale";
 
 export const DisplayMoments = () => {
@@ -27,18 +27,22 @@ export const DisplayMoments = () => {
 
   const updateTokens = async () => {
     const tokens = await Promise.all(await getAllTokens());
-    setTokens(tokens);
+    setTokens(tokens.filter((v) => v[0] !== accounts.data[0]));
   };
 
   useEffect(() => {
     updateTokens();
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accounts]);
+
   return (
     <Row gutter={[8, 48]}>
       {tokens.map((token) => (
-        <Col dir="vertical" span={6} key={token.tokenId}>
-          <CreateMomentSale imgSrc={token.metaData} tokenId={token.tokenId} />
-        </Col>
+        <CreateMomentSale
+          imgSrc={token.metaData}
+          tokenId={token.tokenId}
+          key={token.tokenId}
+        />
       ))}
     </Row>
   );

@@ -5,7 +5,7 @@ import { useInjectReducer, useInjectSaga } from "redux-injectors";
 
 import appSaga from "./App.saga";
 import { isEmpty } from "lodash";
-import { Layout, Menu } from "antd";
+import { Layout, Menu, Row } from "antd";
 import { Link, BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { Home } from "./container/Home/Home";
 import { MarketPlace } from "./container/MarketPlace/MarketPlace";
@@ -57,14 +57,28 @@ function App() {
     <Layout className="App">
       <Header>
         <div className="container-fluid">
-          <div className="row justify-content-between">
-            <div className="col-lg-1">
-              <p className="logo" style={{ color: "white" }}>
+          <Row className="row justify-content-between">
+            <div className="col-5">
+              <p className="logo" style={{ color: "white", fontSize: "15px" }}>
                 IPL Moments
               </p>
             </div>
             <MintMoments />
-          </div>
+            <div className="col-1 align-content-center">
+              <p
+                style={{
+                  background: "white",
+                  borderRadius: "50px",
+                  height: "30px",
+                  lineHeight: "30px",
+                  padding: "0 5px",
+                  margin: "25px 0",
+                }}
+              >
+                {accounts[0].slice(0, 6) + "..." + accounts[0].slice(-4)}
+              </p>
+            </div>
+          </Row>
         </div>
       </Header>
       <Layout>

@@ -1,3 +1,4 @@
+import { Button, Input, Row } from "antd";
 import { get, isEmpty } from "lodash";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
@@ -7,32 +8,48 @@ export const MintMoments = () => {
   const contract = useSelector(selectContracts);
   const accounts = useSelector(selectAccounts);
 
-  const [momentUrl, setMomentUrl] = useState([]);
+  const [momentUrl, setMomentUrl] = useState("");
+  const [playerName, setPlayerName] = useState("");
 
   const mintMoment = async () => {
     if (
       isEmpty(contract.IPLM) ||
       isEmpty(get(accounts, "data")) ||
-      isEmpty(momentUrl)
+      isEmpty(momentUrl) ||
+      isEmpty(playerName)
     ) {
       return;
     }
-    await contract.IPLM.createMoment(momentUrl);
+    await contract.IPLM.createMoment(momentUrl, playerName);
   };
 
   const onMomentUrlChange = (e) => {
     setMomentUrl(e.target.value);
   };
 
+  const handlePlayerNameChange = (e) => {
+    setPlayerName(e.target.value);
+  };
+
   return (
-    <div className="col-lg-3">
-      <input
-        className="m-3"
-        onChange={onMomentUrlChange}
-        value={momentUrl}
-        placeholder="Moment url"
-      />
-      <button onClick={mintMoment}>Mint moment</button>
-    </div>
+    <Row className="col-6 align-content-center">
+      <Row className="col-6 align-content-center">
+        <Input
+          className="col me-2"
+          onChange={handlePlayerNameChange}
+          value={playerName}
+          placeholder="Player name"
+        />
+        <Input
+          className="col"
+          onChange={onMomentUrlChange}
+          value={momentUrl}
+          placeholder="Moment url"
+        />
+      </Row>
+      <Button className="ms-2" onClick={mintMoment}>
+        Mint moment
+      </Button>
+    </Row>
   );
 };
