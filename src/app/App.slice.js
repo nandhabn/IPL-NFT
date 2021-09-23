@@ -23,6 +23,12 @@ const dealDetailsSlice = createSlice({
     setContracts: (state, action) => {
       state.contracts = { ...state.contracts, ...action.payload };
     },
+    setTokenDetails: (state, action) => {
+      state.tokenDetails = action.payload;
+    },
+    setFile: (state, action) => {
+      state.file = action.payload;
+    },
   },
 });
 
@@ -34,6 +40,7 @@ export const {
   fetchAccountDetailsFailed,
   setContracts,
   setProvider,
+  setTokenDetails,
 } = actions;
 
 export const appReducer = reducer;

@@ -1,59 +1,96 @@
-import { Button, Input, Row } from "antd";
+import {
+  Button,
+  Input,
+  Upload,
+  message,
+  Row,
+  Modal,
+  Col,
+  Space,
+  Card,
+  Steps,
+} from "antd";
 import { get, isEmpty } from "lodash";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import {
-  selectAccounts,
-  selectContracts,
-  selectProvider,
-} from "../../app.selector";
-import { utils } from "ethers";
+import { selectAccounts, selectContracts } from "../../app.selector";
+import { NFTStorage, File } from "nft.storage";
+import { NFTStorage_APIKEY } from "../../../utils/config";
+import { UploadOutlined } from '@ant-design/icons';
+import TokenDetails from "../Pages/First/TokenDetails";
+import FileUpload from "../Pages/FileUpload/FileUpload";
 
-export const MintMoments = ({ owner }) => {
-  const contract = useSelector(selectContracts);
-  const accounts = useSelector(selectAccounts);
-  const provider = useSelector(selectProvider);
+const { Step } = Steps;
+const { Dragger } = Upload;
 
-  const [momentUrl, setMomentUrl] = useState("");
-  const [playerName, setPlayerName] = useState("");
+const steps = [
+  {
+    title: 'Token Details',
+    content: <TokenDetails />,
+  },
+  {
+    title: 'Upload File',
+    content: <FileUpload />,
+  },
+  {
+    title: 'Preview and Mint',
+    content: 'Last-content',
+  },
+];
 
-  const mintMoment = async () => {
-    if (
-      isEmpty(contract.IPLM) ||
-      isEmpty(get(accounts, "data")) ||
-      isEmpty(momentUrl) ||
-      isEmpty(playerName)
-    ) {
-      return;
-    }
-    // await contract.IPLM.createMoment(momentUrl, playerName);
-    const abicoder = new utils.AbiCoder();
-    const messaeHash = utils.keccak256(
-      abicoder.encode(["string", "string", "uint8"], [playerName, momentUrl, 0])
-    );
+export const MintMoments = () => {
 
-    let messageHashBytes = utils.arrayify(messaeHash);
+  const [current, setCurrent] = React.useState(0);
 
-    let flatSig = await provider
-      .getSigner(accounts.data[0])
-      .signMessage(messageHashBytes);
+  const [metaData, setMetaData] = useState({});
 
-    await contract.IPLM.mintAndTransfer(playerName, momentUrl, 0, flatSig);
+  const next = () => {
+    setCurrent(current + 1);
   };
 
-  const onMomentUrlChange = (e) => {
-    setMomentUrl(e.target.value);
+  const prev = () => {
+    setCurrent(current - 1);
   };
 
-  const handlePlayerNameChange = (e) => {
-    setPlayerName(e.target.value);
+  const mintToken = () => {
+
   };
 
   return (
-    <Row className="col-6 align-content-center">
-      {Number(owner) === Number(accounts.data[0]) && (
-        <>
-          <Row className="col-6 align-content-center">
+    <div>
+      <Card
+      actions={[
+        <div className="steps-action">
+            {current < steps.length - 1 && (
+              <Button type="primary" onClick={() => next()}>
+                Next
+              </Button>
+            )}
+            {current === steps.length - 1 && (
+              <Button type="primary" onClick={mintToken}>
+                Mint Token
+              </Button>
+            )}
+            {current > 0 && (
+              <Button style={{ margin: '0 8px' }} onClick={() => prev()}>
+                Previous
+              </Button>
+            )}
+          </div>
+      ]}>
+        <Steps current={current}>
+          {steps.map(item => (
+            <Step key={item.title} title={item.title} />
+          ))}
+        </Steps>
+        <Card>
+          <div className="steps-content">{steps[current].content}</div>
+        </Card>
+      </Card>
+      {/* <Card title="Card title" bordered={false} style={{ width: 1300 }}>
+        <Row>
+          <Space direction="vertical">
+
             <Input
               className="col me-2"
               onChange={handlePlayerNameChange}
@@ -62,16 +99,42 @@ export const MintMoments = ({ owner }) => {
             />
             <Input
               className="col"
-              onChange={onMomentUrlChange}
               value={momentUrl}
               placeholder="Moment url"
             />
-          </Row>
-          <Button className="ms-2" onClick={mintMoment}>
-            Mint moment
-          </Button>
-        </>
-      )}
-    </Row>
+            <Input
+              className="col me-2"
+              onChange={handlePlayerNameChange}
+              value={playerName}
+              placeholder="Player name"
+            />
+            <Input
+              className="col"
+              value={momentUrl}
+              placeholder="Moment url"
+            />
+            <Input
+              className="col me-2"
+              onChange={handlePlayerNameChange}
+              value={playerName}
+              placeholder="Player name"
+            />
+            <Input
+              className="col"
+              value={momentUrl}
+              placeholder="Moment url"
+            />
+
+            <Upload >
+              <Button icon={<UploadOutlined />}>Click to Upload</Button>
+            </Upload>
+            <Button onClick={mintMoment}>
+              Mint moment
+            </Button>
+          </Space>
+        </Row>
+      </Card> */}
+
+    </div>
   );
 };

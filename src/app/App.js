@@ -2,16 +2,15 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { appReducer, fetchAccountDetails } from "./App.slice";
 import { useInjectReducer, useInjectSaga } from "redux-injectors";
-
+import { CarWriter } from "@ipld/car";
+// import { packToBlob } from "ipfs-car/pack/blob";
 import appSaga from "./App.saga";
 import { isEmpty } from "lodash";
 import { Layout, Menu, Row } from "antd";
 import { Link, BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { Home } from "./container/Home/Home";
 import { MarketPlace } from "./container/MarketPlace/MarketPlace";
-import { MintMoments } from "./components/MintMoments/MintMoments";
-import { selectContracts } from "./app.selector";
-import {} from "ipfs-car";
+import { MintToken } from "./container/MintToken/MintToken";
 
 const { Content, Sider, Header } = Layout;
 
@@ -82,7 +81,6 @@ function App() {
                 Moments
               </p>
             </div>
-            <MintMoments owner={owner} />
             <div className="col-1 align-content-center">
               <p
                 style={{
@@ -110,12 +108,16 @@ function App() {
               <Menu.Item>
                 <Link to={"/market"}>Market Place</Link>
               </Menu.Item>
+              <Menu.Item>
+                <Link to={"/mint"}>Mint Tokens</Link>
+              </Menu.Item>
             </Menu>
           </Sider>
           <Content>
             <Switch>
               <Route path={"/home"} component={Home} />
               <Route path={"/market"} component={MarketPlace} />
+              <Route path={"/mint"} component={MintToken} />
             </Switch>
           </Content>
         </Router>
