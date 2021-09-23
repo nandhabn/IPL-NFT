@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { appReducer, fetchAccountDetails } from "./App.slice";
 import { useInjectReducer, useInjectSaga } from "redux-injectors";
-import { CarWriter } from "@ipld/car";
-// import { packToBlob } from "ipfs-car/pack/blob";
 import appSaga from "./App.saga";
 import { isEmpty } from "lodash";
 import { Layout, Menu, Row } from "antd";
@@ -36,10 +34,8 @@ function App() {
   useInjectSaga({ key: "app", saga: appSaga });
 
   const [isLoading, setLoading] = useState(true);
-  const [owner, setOwner] = useState("");
 
   const accounts = useAccounts();
-  const contracts = useSelector(selectContracts);
 
   const dispatch = useDispatch();
 
@@ -52,15 +48,6 @@ function App() {
       dispatch(fetchAccountDetails(accounts));
     }
   }, [dispatch, accounts]);
-
-  useEffect(() => {
-    (async () => {
-      if (!isEmpty(contracts)) {
-        const owner = await contracts.IPLM.owner();
-        setOwner(owner);
-      }
-    })();
-  });
 
   if (isLoading) {
     return <>Fetching wallet</>;
