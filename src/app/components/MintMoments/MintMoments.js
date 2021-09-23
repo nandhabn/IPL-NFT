@@ -2,11 +2,17 @@ import { Button, Input, Row } from "antd";
 import { get, isEmpty } from "lodash";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import { selectAccounts, selectContracts } from "../../app.selector";
+import {
+  selectAccounts,
+  selectContracts,
+  selectProvider,
+} from "../../app.selector";
+import { utils } from "ethers";
 
 export const MintMoments = ({ owner }) => {
   const contract = useSelector(selectContracts);
   const accounts = useSelector(selectAccounts);
+  const provider = useSelector(selectProvider);
 
   const [momentUrl, setMomentUrl] = useState("");
   const [playerName, setPlayerName] = useState("");
@@ -20,7 +26,19 @@ export const MintMoments = ({ owner }) => {
     ) {
       return;
     }
-    await contract.IPLM.createMoment(momentUrl, playerName);
+    // await contract.IPLM.createMoment(momentUrl, playerName);
+    const abicoder = new utils.AbiCoder();
+    const messaeHash = utils.keccak256(
+      abicoder.encode(["string", "string", "uint8"], [playerName, momentUrl, 0])
+    );
+
+    let messageHashBytes = utils.arrayify(messaeHash);
+
+    let flatSig = await provider
+      .getSigner(accounts.data[0])
+      .signMessage(messageHashBytes);
+
+    await contract.IPLM.mintAndTransfer(playerName, momentUrl, 0, flatSig);
   };
 
   const onMomentUrlChange = (e) => {

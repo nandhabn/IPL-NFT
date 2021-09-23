@@ -11,6 +11,7 @@ import { Home } from "./container/Home/Home";
 import { MarketPlace } from "./container/MarketPlace/MarketPlace";
 import { MintMoments } from "./components/MintMoments/MintMoments";
 import { selectContracts } from "./app.selector";
+import {} from "ipfs-car";
 
 const { Content, Sider, Header } = Layout;
 
