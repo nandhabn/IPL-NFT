@@ -7,8 +7,7 @@ import {
   selectContracts,
   selectProvider,
 } from "../../app.selector";
-import { contractIds } from "../../../utils/constans.json";
-import { ethers } from "ethers";
+import { utils } from "ethers";
 
 export const MintMoments = ({ owner }) => {
   const contract = useSelector(selectContracts);
@@ -27,7 +26,19 @@ export const MintMoments = ({ owner }) => {
     ) {
       return;
     }
-    await contract.IPLM.createMoment(momentUrl, playerName);
+    // await contract.IPLM.createMoment(momentUrl, playerName);
+    const abicoder = new utils.AbiCoder();
+    const messaeHash = utils.keccak256(
+      abicoder.encode(["string", "string", "uint8"], [playerName, momentUrl, 0])
+    );
+
+    let messageHashBytes = utils.arrayify(messaeHash);
+
+    let flatSig = await provider
+      .getSigner(accounts.data[0])
+      .signMessage(messageHashBytes);
+
+    await contract.IPLM.mintAndTransfer(playerName, momentUrl, 0, flatSig);
   };
 
   const onMomentUrlChange = (e) => {

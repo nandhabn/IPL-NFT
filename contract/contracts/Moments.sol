@@ -11,30 +11,35 @@ contract IPLMoments is IERC721, MomentAccessControl {
     string public _symbol = "IPLM";
 
     struct Moment {
-        uint256 seriesId;
+        uint256 playID;
+        uint256 serialNumber;
+    }
+
+    struct Play {
         string url;
-        uint256 momentId;
         uint8 tokenType;
-        string playerName;
     }
 
     Moment[] internal moments;
-    uint256 internal seriesId = 0;
+    Play[] internal plays;
 
     uint256 private _totalSupply = 0;
     mapping(uint256 => address) private momentsOwners;
     mapping(address => uint256) private ownershipTokenCount;
     mapping(uint256 => address) private _tokenApprovals;
     mapping(address => mapping(address => bool)) private _operatorApprovals;
+    mapping(uint256 => uint256) private momentSNCount;
 
     uint16[4] _tokenType = [
         60000, // common
-        1000, //   rare
-        10, //     epic
-        3 //       Legendary
+        1000, //  rare
+        10, //    epic
+        3 //      Legendary
     ];
 
-    event momentCreated(uint256 seriesId, string url, uint256 tokenId);
+    event playCreated(uint256 playID, string url, string tokenType);
+
+    event momentCreated(uint256 playID, uint256 serialNumber, uint256 momentID);
 
     function name() public view returns (string memory) {
         return _name;
@@ -44,27 +49,36 @@ contract IPLMoments is IERC721, MomentAccessControl {
         return _symbol;
     }
 
-    function createMoment(
-        string memory _url,
-        string memory playerName,
-        uint8 momentType
-    ) public onlyMinter {
-        _mint(_url, playerName, momentType);
+    function createPlay(string memory _url, uint8 tokenType)
+        public
+        onlyMinter
+        returns (uint256)
+    {
+        require(tokenType < _tokenType.length);
+        Play memory newPlay = Play({url: _url, tokenType: tokenType});
+        plays.push(newPlay);
+        uint256 newPlayID = plays.length;
+        return newPlayID;
     }
 
-    function _mint(
-        string memory _url,
-        string memory playerName,
-        uint8 momentType
-    ) internal {
-        require(momentType < 4, "Invalid moment type");
+    function momentSNCountOf(uint256 playID) public view returns (uint256) {
+        return momentSNCount[playID];
+    }
+
+    function _mint(uint256 playID) internal returns (uint256) {
+        Play memory play = plays[playID];
+
+        require(
+            momentSNCountOf(playID) < _tokenType[play.tokenType],
+            "Invalid moment type"
+        );
+
+        uint256 momentSerialNumber = momentSNCount[playID];
+        momentSNCount[playID]++;
 
         Moment memory newMoment = Moment({
-            seriesId: seriesId,
-            url: _url,
-            tokenType: momentType,
-            momentId: 10,
-            playerName: playerName
+            playID: playID,
+            serialNumber: momentSerialNumber
         });
         moments.push(newMoment);
         uint256 newTokenId = moments.length - 1;
@@ -73,15 +87,9 @@ contract IPLMoments is IERC721, MomentAccessControl {
         _totalSupply++;
         ownershipTokenCount[minter()]++;
 
-        emit momentCreated(seriesId, _url, 10);
-    }
+        emit momentCreated(playID, momentSerialNumber, newTokenId);
 
-    function startNextSeries() public {
-        seriesId++;
-    }
-
-    function getSeriesId() public view returns (uint256) {
-        return seriesId;
+        return newTokenId;
     }
 
     function balanceOf(address owner)
@@ -239,27 +247,20 @@ contract IPLMoments is IERC721, MomentAccessControl {
         bytes calldata data
     ) public override {}
 
-    function mintAndTransfer(
-        address account,
-        Moment memory moment,
+    function mintAndTransferPack(
+        uint256[] memory playIDs,
         bytes calldata signature
     ) external {
-        require(
-            _verify(_hash(account, moment), signature),
-            "Invalid signature"
-        );
-        _mint(moment, account, 0);
+        require(_verify(_hash(playIDs), signature), "Invalid signature");
+        for (uint256 index = 0; index < playIDs.length; index++) {
+            uint256 newTokenId = _mint(playIDs[index]);
+            _transfer(minter(), _msgSender(), newTokenId);
+        }
     }
 
-    function _hash(address account, Moment memory moment)
-        internal
-        pure
-        returns (bytes32)
-    {
+    function _hash(uint256[] memory playIDs) internal pure returns (bytes32) {
         return
-            ECDSA.toEthSignedMessageHash(
-                keccak256(abi.encode(account, moment))
-            );
+            ECDSA.toEthSignedMessageHash(keccak256(abi.encodePacked(playIDs)));
     }
 
     function _verify(bytes32 digest, bytes memory signature)
