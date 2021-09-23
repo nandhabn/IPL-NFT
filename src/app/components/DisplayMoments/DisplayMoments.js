@@ -31,6 +31,7 @@ export const DisplayMoments = () => {
   };
 
   useEffect(() => {
+    console.log(contract);
     updateTokens();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accounts]);
