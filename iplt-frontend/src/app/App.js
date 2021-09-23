@@ -89,13 +89,13 @@ function App() {
         <Router>
           <Sider>
             <Menu theme="dark">
-              <Menu.Item>
+              <Menu.Item key="home">
                 <Link to={"/home"}>Home</Link>
               </Menu.Item>
-              <Menu.Item>
+              <Menu.Item key="market">
                 <Link to={"/market"}>Market Place</Link>
               </Menu.Item>
-              <Menu.Item>
+              <Menu.Item key="mint">
                 <Link to={"/mint"}>Mint Tokens</Link>
               </Menu.Item>
             </Menu>

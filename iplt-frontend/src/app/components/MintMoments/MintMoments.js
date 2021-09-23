@@ -1,27 +1,18 @@
 import {
   Button,
-  Input,
-  Upload,
-  message,
-  Row,
-  Modal,
-  Col,
-  Space,
   Card,
   Steps,
 } from "antd";
-import { get, isEmpty } from "lodash";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import { selectAccounts, selectContracts } from "../../app.selector";
-import { NFTStorage, File } from "nft.storage";
+import { selectFile, selectTokenDetails } from "../../app.selector";
+import { NFTStorage } from "nft.storage";
 import { NFTStorage_APIKEY } from "../../../utils/config";
-import { UploadOutlined } from '@ant-design/icons';
-import TokenDetails from "../Pages/First/TokenDetails";
-import FileUpload from "../Pages/FileUpload/FileUpload";
+import TokenDetails from "../Steps/TokenDetails/TokenDetails";
+import FileUpload from "../Steps/FileUpload/FileUpload";
+import PreviewAndMint from "../Steps/PreviewMint/PreviewAndMint";
 
 const { Step } = Steps;
-const { Dragger } = Upload;
 
 const steps = [
   {
@@ -34,15 +25,15 @@ const steps = [
   },
   {
     title: 'Preview and Mint',
-    content: 'Last-content',
+    content: <PreviewAndMint />,
   },
 ];
 
 export const MintMoments = () => {
 
-  const [current, setCurrent] = React.useState(0);
-
-  const [metaData, setMetaData] = useState({});
+  const [current, setCurrent] = useState(0);
+  const tokenDetails = useSelector(selectTokenDetails);
+  const file = useSelector(selectFile);
 
   const next = () => {
     setCurrent(current + 1);
@@ -52,15 +43,27 @@ export const MintMoments = () => {
     setCurrent(current - 1);
   };
 
-  const mintToken = () => {
-
+  const mintToken = async () => {
+    const nftStorageClient = new NFTStorage({ token: NFTStorage_APIKEY });
+    const metaData = await nftStorageClient.store({
+      name: tokenDetails["Play Name"],
+      description: tokenDetails["Description"],
+      image: file,
+      properties: tokenDetails
+    })
+    console.log(metaData);
   };
 
   return (
     <div>
       <Card
-      actions={[
-        <div className="steps-action">
+        actions={[
+          <div className="steps-action">
+            {current > 0 && (
+              <Button style={{ margin: '0 8px' }} onClick={() => prev()}>
+                Previous
+              </Button>
+            )}
             {current < steps.length - 1 && (
               <Button type="primary" onClick={() => next()}>
                 Next
@@ -68,16 +71,11 @@ export const MintMoments = () => {
             )}
             {current === steps.length - 1 && (
               <Button type="primary" onClick={mintToken}>
-                Mint Token
-              </Button>
-            )}
-            {current > 0 && (
-              <Button style={{ margin: '0 8px' }} onClick={() => prev()}>
-                Previous
+                Upload and Mint
               </Button>
             )}
           </div>
-      ]}>
+        ]}>
         <Steps current={current}>
           {steps.map(item => (
             <Step key={item.title} title={item.title} />
@@ -87,53 +85,6 @@ export const MintMoments = () => {
           <div className="steps-content">{steps[current].content}</div>
         </Card>
       </Card>
-      {/* <Card title="Card title" bordered={false} style={{ width: 1300 }}>
-        <Row>
-          <Space direction="vertical">
-
-            <Input
-              className="col me-2"
-              onChange={handlePlayerNameChange}
-              value={playerName}
-              placeholder="Player name"
-            />
-            <Input
-              className="col"
-              value={momentUrl}
-              placeholder="Moment url"
-            />
-            <Input
-              className="col me-2"
-              onChange={handlePlayerNameChange}
-              value={playerName}
-              placeholder="Player name"
-            />
-            <Input
-              className="col"
-              value={momentUrl}
-              placeholder="Moment url"
-            />
-            <Input
-              className="col me-2"
-              onChange={handlePlayerNameChange}
-              value={playerName}
-              placeholder="Player name"
-            />
-            <Input
-              className="col"
-              value={momentUrl}
-              placeholder="Moment url"
-            />
-
-            <Upload >
-              <Button icon={<UploadOutlined />}>Click to Upload</Button>
-            </Upload>
-            <Button onClick={mintMoment}>
-              Mint moment
-            </Button>
-          </Space>
-        </Row>
-      </Card> */}
 
     </div>
   );
