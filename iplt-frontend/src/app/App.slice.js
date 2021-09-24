@@ -41,6 +41,7 @@ export const {
   setContracts,
   setProvider,
   setTokenDetails,
+  setFile,
 } = actions;
 
 export const appReducer = reducer;
