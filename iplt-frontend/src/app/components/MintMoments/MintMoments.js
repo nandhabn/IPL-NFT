@@ -46,8 +46,8 @@ export const MintMoments = () => {
   const mintToken = async () => {
     const nftStorageClient = new NFTStorage({ token: NFTStorage_APIKEY });
     const metaData = await nftStorageClient.store({
-      name: tokenDetails["Play Name"],
-      description: tokenDetails["Description"],
+      name: tokenDetails["playName"],
+      description: tokenDetails["description"],
       image: file,
       properties: tokenDetails
     })

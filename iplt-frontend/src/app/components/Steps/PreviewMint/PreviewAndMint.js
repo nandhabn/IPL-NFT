@@ -4,6 +4,7 @@ import {
 // import { startCase } from "lodash";
 import { useSelector } from "react-redux";
 import { selectTokenDetails, selectFile } from "../../../app.selector";
+import { formProperties } from "../../../../utils/constants.json"
 
 const PreviewAndMint = () => {
 
@@ -13,14 +14,21 @@ const PreviewAndMint = () => {
     return (
         <div>
             <Descriptions title="Token Details">
-                {/* {setDesc} */}
                 {
                     tokenDetails && Object.entries(tokenDetails).map(([key, value]) => {
-                        return (<Descriptions.Item key={key} label={key}>{value}</Descriptions.Item>)
+                        return (
+                            <Descriptions.Item key={key} label={formProperties[key]}>{key === "matchDate" ? value.toDate().toLocaleDateString() : value}</Descriptions.Item>
+                        )
                     })
                 }
             </Descriptions>
-            {fileSelected && <img src={URL.createObjectURL(fileSelected)}></img>}
+            {fileSelected && tokenDetails &&
+                <img
+                    height="300px"
+                    width="200px"
+                    src={URL.createObjectURL(fileSelected)}
+                    alt={tokenDetails.playName}></img>
+            }
         </div>
     );
 }
