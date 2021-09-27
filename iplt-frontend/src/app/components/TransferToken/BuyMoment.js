@@ -6,7 +6,7 @@ import {
   selectContracts,
   selectProvider,
 } from "../../app.selector";
-import { contractIds } from "../../../utils/constans.json";
+import { contractIds } from "../../../utils/constants.json";
 import { isNumber } from "lodash";
 
 export const BuyMomentOrEndSale = ({ saleId, buyToken }) => {

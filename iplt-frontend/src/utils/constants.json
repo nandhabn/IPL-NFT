@@ -1,0 +1,37 @@
+{
+    "contractIds": {
+        "IPLMoments": "0xC7d130DF3F982c9e9014d5565547af389CE04567",
+        "IPLToken": "0xffF3a116b2Df6A002999bdeBeC86294B44b31590"
+    },
+    "formProperties": {
+        "playName": "Play Name",
+        "description": "Description",
+        "playerName": "Player Name",
+        "teamName": "Team Name",
+        "opponentTeamName": "Opponent Team Name",
+        "season": "Season",
+        "playType": "Play Type",
+        "matchDate": "Match Date",
+        "rarity": "Rarity"
+    },
+    "rarity": [
+        "Common",
+        "Rare",
+        "Epic",
+        "Legendary"
+    ],
+    "playTypes": [
+        "Wickets",
+        "Catch",
+        "Six",
+        "Four",
+        "Run Outs",
+        "Special Moments",
+        "Fielding",
+        "Others"
+    ],
+    "scanLinks": {
+        "56": "https://bscscan.com",
+        "97": "https://testnet.bscscan.com"
+    }
+}

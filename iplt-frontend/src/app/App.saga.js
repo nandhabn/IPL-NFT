@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
 import momentAbi from "../contracts/IPLMoments.json";
 import tokenAbi from "../contracts/IPLToken.json";
-import { contractIds } from "../utils/constans.json";
+import { contractIds } from "../utils/constants.json";
 
 import {
   fetchAccountDetails,

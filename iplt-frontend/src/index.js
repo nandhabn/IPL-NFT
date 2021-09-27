@@ -7,13 +7,16 @@ import { Provider } from "react-redux";
 import { configureAppStore } from "./store/configureStore";
 import "bootstrap/dist/css/bootstrap.css";
 import "antd/dist/antd.css";
+import { MetamaskStateProvider } from 'use-metamask';
 
 const store = configureAppStore();
 
 ReactDOM.render(
   <Provider store={store}>
     <React.StrictMode>
-      <App />
+      <MetamaskStateProvider>
+        <App />
+      </MetamaskStateProvider>
     </React.StrictMode>
   </Provider>,
   document.getElementById("root")
