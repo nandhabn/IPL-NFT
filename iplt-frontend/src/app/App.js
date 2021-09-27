@@ -1,60 +1,51 @@
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
 import { appReducer, fetchAccountDetails } from "./App.slice";
 import { useInjectReducer, useInjectSaga } from "redux-injectors";
 import appSaga from "./App.saga";
-import { isEmpty } from "lodash";
+import './styles.css';
 import { Layout, Menu, Row } from "antd";
 import { Link, BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { Home } from "./container/Home/Home";
 import { MarketPlace } from "./container/MarketPlace/MarketPlace";
 import { MintToken } from "./container/MintToken/MintToken";
+import SigninButton from './components/Wallet/SignInButton';
+import WalletModal from './components/Wallet/WalletModal';
+import { useMetamask } from "use-metamask";
+import { ethers } from "ethers";
+import { useDispatch } from "react-redux";
 
 const { Content, Sider, Header } = Layout;
 
-const useAccounts = () => {
-  const [accounts, setAccounts] = useState();
-
-  useEffect(() => {
-    window.ethereum.request({
-      method: "eth_requestAccounts",
-    });
-    window.ethereum.request({ method: "eth_accounts" }).then((accounts) => {
-      setAccounts(accounts);
-    });
-    window.ethereum.on("accountsChanged", function (accounts) {
-      setAccounts(accounts);
-    });
-  }, []);
-  return accounts;
-};
-
-function App() {
+const App = () => {
   useInjectReducer({ key: "app", reducer: appReducer });
   useInjectSaga({ key: "app", saga: appSaga });
 
-  const [isLoading, setLoading] = useState(true);
-
-  const accounts = useAccounts();
-
+  const { connect, metaState } = useMetamask();
+  const [address, setAddress] = useState();
+  const [showWalletDetails, setShowWalletDetails] = useState(false);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!isEmpty(accounts)) setLoading(false);
-  }, [accounts]);
+    setAddress(metaState.account[0] && (metaState.account[0].substring(0, 5) + "..." + metaState.account[0].substring(metaState.account[0].length - 3, metaState.account[0].length)).slice(2));
+  }, [metaState.account]);
+
+  const connectMetamask = async () => {
+    try {
+      await connect(ethers.providers.Web3Provider, "any");
+    }
+    catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
-    if (!isEmpty(accounts)) {
-      dispatch(fetchAccountDetails(accounts));
+    if (metaState.isConnected) {
+      dispatch(fetchAccountDetails(metaState.account));
     }
-  }, [dispatch, accounts]);
-
-  if (isLoading) {
-    return <>Fetching wallet</>;
-  }
+  }, [dispatch, metaState.account, metaState.isConnected]);
 
   return (
-    <Layout className="App">
+    <Layout className="App overflow-auto">
       <Header>
         <div className="container-fluid">
           <Row className="row justify-content-between">
@@ -68,19 +59,24 @@ function App() {
                 Moments
               </p>
             </div>
-            <div className="col-1 align-content-center">
-              <p
-                style={{
-                  background: "white",
-                  borderRadius: "50px",
-                  height: "30px",
-                  lineHeight: "30px",
-                  padding: "0 5px",
-                  margin: "25px 0",
-                }}
-              >
-                {accounts[0].slice(0, 6) + "..." + accounts[0].slice(-4)}
-              </p>
+
+            <div className="col-3 align-items-center justify-content-center p-3">
+              {metaState.isConnected ?
+                <SigninButton onClick={e => setShowWalletDetails(true)} btnName={
+                  `${address}
+            [${metaState.chain.name === 'unknown' ?
+                    metaState.chain.id === '97' ?
+                      "bsc-test" :
+                      "bsc-main"
+                    :
+                    metaState.chain.name}]`} />
+                :
+                <SigninButton onClick={connectMetamask} btnName="Connect Wallet" />
+
+              }
+              <WalletModal
+                setShow={setShowWalletDetails}
+                show={showWalletDetails} />
             </div>
           </Row>
         </div>

@@ -14,21 +14,6 @@ import PreviewAndMint from "../Steps/PreviewMint/PreviewAndMint";
 
 const { Step } = Steps;
 
-const steps = [
-  {
-    title: 'Token Details',
-    content: <TokenDetails />,
-  },
-  {
-    title: 'Upload File',
-    content: <FileUpload />,
-  },
-  {
-    title: 'Preview and Mint',
-    content: <PreviewAndMint />,
-  },
-];
-
 export const MintMoments = () => {
 
   const [current, setCurrent] = useState(0);
@@ -43,11 +28,26 @@ export const MintMoments = () => {
     setCurrent(current - 1);
   };
 
+  const steps = [
+    {
+      title: 'Token Details',
+      content: <TokenDetails />,
+    },
+    {
+      title: 'Upload File',
+      content: <FileUpload />,
+    },
+    {
+      title: 'Preview and Mint',
+      content: <PreviewAndMint />,
+    },
+  ];
+
   const mintToken = async () => {
     const nftStorageClient = new NFTStorage({ token: NFTStorage_APIKEY });
     const metaData = await nftStorageClient.store({
-      name: tokenDetails["Play Name"],
-      description: tokenDetails["Description"],
+      name: tokenDetails["playName"],
+      description: tokenDetails["description"],
       image: file,
       properties: tokenDetails
     })
@@ -76,14 +76,15 @@ export const MintMoments = () => {
             )}
           </div>
         ]}>
-        <Steps current={current}>
+        <Steps
+          current={current}>
           {steps.map(item => (
-            <Step key={item.title} title={item.title} />
+            <Step
+              key={item.title}
+              title={item.title} />
           ))}
         </Steps>
-        <Card>
-          <div className="steps-content">{steps[current].content}</div>
-        </Card>
+        <div style={{ 'margin-top': '24px' }} className="steps-content">{steps[current].content}</div>
       </Card>
 
     </div>

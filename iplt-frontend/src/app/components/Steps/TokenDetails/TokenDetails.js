@@ -7,15 +7,13 @@ import {
     Radio,
     DatePicker,
     InputNumber,
-    Button,
 } from "antd";
 import { setTokenDetails } from "../../../App.slice";
 import { useDispatch } from "react-redux";
+// import locale from "antd/lib/date-picker/locale/en_GB";
+import { formProperties, rarity, playTypes } from "../../../../utils/constants.json";
 
 const { Option } = Select;
-const formData = ["Play Name", "Description" , "Player Name", "Team Name", "Opponent Team Name"];
-const rarity = ["Common", "Rare", "Epic", "Legendary"];
-const playTypes = ["Wickets", "Catch", "Six", "Four", "Run Outs", "Special Moments", "Fielding", "Others"];
 // const rules = [
 //     {
 //         required: true,
@@ -27,36 +25,39 @@ const TokenDetails = () => {
 
     const dispatch = useDispatch();
 
-    const onFinish = (values) => {
-        console.log(setTokenDetails(values));
-        dispatch(setTokenDetails(values));
-    };
+    const onFieldsChange = (changed, all) => {
+        dispatch(setTokenDetails(all));
+    }
 
     return (
         <div>
             <Form
-                onFinish={onFinish}
                 name="basic"
                 autoComplete="off"
                 layout="vertical"
+                // onFieldsChange={onFields}
+                onValuesChange={onFieldsChange}
             >
                 <Row>
                     <Col span={11}>
-                        {formData.map(formLabel => {
-                            return (
-                                <Form.Item
-                                    key={formLabel}
-                                    label={formLabel}
-                                    name={formLabel}>
-                                    <Input placeholder={formLabel} />
-                                </Form.Item>
-                            );
-                        })}
+                        {
+                            Object.entries(formProperties).map(([key, value], index) => {
+                                return (
+                                   index < 5 && <Form.Item
+                                        key={key}
+                                        label={value}
+                                        name={key}>
+                                        <Input placeholder={value} />
+                                    </Form.Item>
+                                )
+                            })
+                        }
 
                     </Col>
                     <Col span={11} offset={2}>
 
                         <Form.Item
+                            name="playType"
                             label="Play Type">
                             {/* rules={rules}> */}
                             <Select placeholder="Select Play Type">
@@ -72,7 +73,7 @@ const TokenDetails = () => {
 
                         <Form.Item
                             label="Ratity"
-                            name="size">
+                            name="rarity">
                             {/* rules={rules}> */}
                             <Radio.Group>
                                 {rarity.map(type => (
@@ -85,23 +86,20 @@ const TokenDetails = () => {
 
 
                         <Form.Item
+                            name="season"
                             label="Season">
                             {/* rules={rules}> */}
                             <InputNumber placeholder="Season" min="1" />
                         </Form.Item>
 
                         <Form.Item
+                            name="matchDate"
                             label="Match Date">
                             {/* rules={rules}> */}
-                            <DatePicker />
+                            <DatePicker picker="date" />
                         </Form.Item>
                     </Col>
                 </Row>
-                <Form.Item>
-                    <Button type="primary" htmlType="submit">
-                        Submit
-                    </Button>
-                </Form.Item>
             </Form>
         </div>
     );
