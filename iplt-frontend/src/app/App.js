@@ -15,6 +15,7 @@ import { ethers } from "ethers";
 import { useDispatch, useSelector } from "react-redux";
 import { selectContracts } from "./app.selector";
 import { isEmpty } from "lodash";
+import { CreatePacks } from "./container/CreatePacks/CreatePacks";
 
 const { Content, Sider, Header } = Layout;
 
@@ -69,7 +70,7 @@ const App = () => {
   }, [dispatch, metaState.account, metaState.isConnected]);
 
   return (
-    <Layout className="App overflow-auto">
+    <Layout className="App">
       <Header>
         <div className="container-fluid">
           <Row className="row justify-content-between">
@@ -89,13 +90,12 @@ const App = () => {
                 <SigninButton
                   onClick={(e) => setShowWalletDetails(true)}
                   btnName={`${address}
-            [${
-              metaState.chain.name === "unknown"
-                ? metaState.chain.id === "97"
-                  ? "bsc-test"
-                  : "bsc-main"
-                : metaState.chain.name
-            }]`}
+                  [${metaState.chain.name === "unknown"
+                      ? metaState.chain.id === "97"
+                        ? "bsc-test"
+                        : "bsc-main"
+                      : metaState.chain.name
+                    }]`}
                 />
               ) : (
                 <SigninButton
@@ -111,7 +111,7 @@ const App = () => {
           </Row>
         </div>
       </Header>
-      <Layout>
+      <Layout className="overflow-auto">
         <Router>
           <Sider>
             <Menu theme="dark">
@@ -122,17 +122,27 @@ const App = () => {
                 <Link to={"/market"}>Market Place</Link>
               </Menu.Item>
               {isAdmin && (
-                <Menu.Item key="mint">
-                  <Link to={"/mint"}>Mint Tokens</Link>
-                </Menu.Item>
+                <>
+                  <Menu.Item key="mint">
+                    <Link to={"/mint"}>Mint Tokens</Link>
+                  </Menu.Item>
+                  <Menu.Item key="createPack">
+                    <Link to={"/createPack"}>Create Pack</Link>
+                  </Menu.Item>
+                </>
               )}
             </Menu>
           </Sider>
-          <Content>
+          <Content style={{ margin: '0 16px' }}>
             <Switch>
               <Route path={"/home"} component={Home} />
               <Route path={"/market"} component={MarketPlace} />
-              {isAdmin && <Route path={"/mint"} component={MintToken} />}
+              {isAdmin &&
+                <>
+                  <Route path={"/mint"} component={MintToken} />
+                  <Route path={"/createPack"} component={CreatePacks} />
+                </>
+              }
             </Switch>
           </Content>
         </Router>
