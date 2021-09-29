@@ -90,8 +90,7 @@ const App = () => {
                 <SigninButton
                   onClick={(e) => setShowWalletDetails(true)}
                   btnName={`${address}
-                  [${
-                    metaState.chain.name === "unknown"
+                  [${metaState.chain.name === "unknown"
                       ? metaState.chain.id === "97"
                         ? "bsc-test"
                         : "bsc-main"

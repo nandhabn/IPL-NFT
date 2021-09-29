@@ -4,7 +4,7 @@ import { CreatePack } from "../../components/CreatePack/CreatePack";
 export const CreatePacks = () => {
   return (
     <div>
-        <CreatePack />
+      <CreatePack />
     </div>
   );
 };

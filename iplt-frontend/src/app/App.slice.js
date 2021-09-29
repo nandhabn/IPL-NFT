@@ -29,7 +29,7 @@ const dealDetailsSlice = createSlice({
     setFile: (state, action) => {
       state.file = action.payload;
     },
-    fetchSigner: (state, action) => {},
+    fetchSigner: (state, action) => { },
     setPackDetails: (state, action) => {
       state.packDetails = action.payload;
     }
