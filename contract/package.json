@@ -10,5 +10,9 @@
     "ethers": "^5.4.6",
     "solc": "^0.8.2",
     "swarm-js": "^0.1.40"
+  },
+  "devDependencies": {
+    "prettier": "^2.4.1",
+    "prettier-plugin-solidity": "^1.0.0-beta.18"
   }
 }

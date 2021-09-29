@@ -35,7 +35,6 @@ export const CreateMomentSale = ({ imgSrc, tokenId, playerName }) => {
       }
       const newSaleId = await contract.IPLM.createSale(tokenId, price);
       setSaleId(newSaleId);
-      console.log(newSaleId);
     } catch (e) {
       openNotification(e.data?.message.split("revert")[1] ?? e.message);
       console.log(e.message);

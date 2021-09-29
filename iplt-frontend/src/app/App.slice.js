@@ -29,6 +29,7 @@ const dealDetailsSlice = createSlice({
     setFile: (state, action) => {
       state.file = action.payload;
     },
+    fetchSigner: (state, action) => {},
   },
 });
 
@@ -42,6 +43,7 @@ export const {
   setProvider,
   setTokenDetails,
   setFile,
+  fetchSigner,
 } = actions;
 
 export const appReducer = reducer;

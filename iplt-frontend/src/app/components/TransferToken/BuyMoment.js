@@ -23,7 +23,6 @@ export const BuyMomentOrEndSale = ({ saleId, buyToken }) => {
       const sale = await contract.IPLM.getSaleById(saleId);
       const price = Number(sale[1]._hex);
       if (price > tokenBalance) {
-        console.log(tokenBalance, sale, price);
         openNotification("Insufficiant tokens in your account");
         return;
       }
@@ -43,7 +42,7 @@ export const BuyMomentOrEndSale = ({ saleId, buyToken }) => {
         await buy(saleId);
       }
     } catch (e) {
-      console.log(e);
+      console.log(e.message);
       openNotification(e.message);
     }
   };

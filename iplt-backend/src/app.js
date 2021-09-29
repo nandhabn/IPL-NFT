@@ -4,9 +4,13 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const database = require('./database');
+const eventListeners = require('./eventListeners');
 
 // connect mongoose with mongo db server
 database.connect();
+
+// Starts event listeners to detect changes in app
+eventListeners();
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');

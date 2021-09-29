@@ -1,21 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { selectAccounts, selectContracts } from "../../app.selector";
+import { selectContracts } from "../../app.selector";
 import { Row } from "antd";
 import { CreateMomentSale } from "../TransferToken/createSale";
+import { isEmpty } from "lodash";
+import { useMetamask } from "use-metamask";
 
 export const DisplayMoments = () => {
   const contract = useSelector(selectContracts);
-  const accounts = useSelector(selectAccounts);
+  const { metaState } = useMetamask();
 
   const [tokens, setTokens] = useState([]);
 
   const getAllTokens = async () => {
-    const balance = await contract.IPLM.balanceOf(accounts.data[0]);
+    const balance = await contract.IPLM.balanceOf(metaState.account[0]);
     const tokens = Array.apply(null, Array(Number(balance._hex))).map(
       async (_, index) => {
         const tokenId = await contract.IPLM.getMomentsOfOwnerByIndex(
-          accounts.data[0],
+          metaState.account[0],
           index
         );
         const metaData = await contract.IPLM.getMomentById(tokenId);
@@ -30,15 +32,20 @@ export const DisplayMoments = () => {
   };
 
   const updateTokens = async () => {
-    const tokens = await Promise.all(await getAllTokens());
-    setTokens(tokens.filter((v) => v[0] !== accounts.data[0]));
+    try {
+      const tokens = await Promise.all(await getAllTokens());
+      setTokens(tokens.filter((v) => v[0] !== metaState.account[0]));
+    } catch (e) {
+      console.log(e.message);
+    }
   };
 
   useEffect(() => {
-    console.log(contract);
-    updateTokens();
+    if (!isEmpty(metaState.account)) {
+      updateTokens();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accounts]);
+  }, [metaState.account]);
 
   return (
     <Row gutter={[8, 48]}>

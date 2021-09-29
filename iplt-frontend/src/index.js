@@ -7,7 +7,7 @@ import { Provider } from "react-redux";
 import { configureAppStore } from "./store/configureStore";
 import "bootstrap/dist/css/bootstrap.css";
 import "antd/dist/antd.css";
-import { MetamaskStateProvider } from 'use-metamask';
+import { MetamaskStateProvider } from "use-metamask";
 
 const store = configureAppStore();
 
