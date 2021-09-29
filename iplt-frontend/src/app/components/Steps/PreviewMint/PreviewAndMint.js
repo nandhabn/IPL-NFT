@@ -4,7 +4,7 @@ import {
 // import { startCase } from "lodash";
 import { useSelector } from "react-redux";
 import { selectTokenDetails, selectFile } from "../../../app.selector";
-import { formProperties } from "../../../../utils/constants.json"
+import { playFormProperties } from "../../../../utils/constants.json"
 
 const PreviewAndMint = () => {
 
@@ -17,7 +17,11 @@ const PreviewAndMint = () => {
                 {
                     tokenDetails && Object.entries(tokenDetails).map(([key, value]) => {
                         return (
-                            <Descriptions.Item key={key} label={formProperties[key]}>{key === "matchDate" ? value.toDate().toLocaleDateString() : value}</Descriptions.Item>
+                            <Descriptions.Item
+                                key={key}
+                                label={playFormProperties[key]}>
+                                {key === "matchDate" ? value.toDate().toLocaleDateString() : value}
+                            </Descriptions.Item>
                         )
                     })
                 }

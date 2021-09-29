@@ -11,7 +11,7 @@ import {
 import { setTokenDetails } from "../../../App.slice";
 import { useDispatch } from "react-redux";
 // import locale from "antd/lib/date-picker/locale/en_GB";
-import { formProperties, rarity, playTypes } from "../../../../utils/constants.json";
+import { playFormProperties, rarity, playTypes } from "../../../../utils/constants.json";
 
 const { Option } = Select;
 // const rules = [
@@ -41,7 +41,7 @@ const TokenDetails = () => {
                 <Row>
                     <Col span={11}>
                         {
-                            Object.entries(formProperties).map(([key, value], index) => {
+                            Object.entries(playFormProperties).map(([key, value], index) => {
                                 return (
                                    index < 5 && <Form.Item
                                         key={key}

@@ -1,42 +1,52 @@
 {
-  "contractIds": {
+    "contractIds": {
     "IPLMoments": "0xF95d4Fdd84Ad46b4CdAC955A8F17A60f655ca4ec",
     "IPLToken": "0xb58cCB575f29C5460802e13eC164647CbE085dF0"
-  },
-  "formProperties": {
-    "playName": "Play Name",
-    "description": "Description",
-    "playerName": "Player Name",
-    "teamName": "Team Name",
-    "opponentTeamName": "Opponent Team Name",
-    "season": "Season",
-    "playType": "Play Type",
-    "matchDate": "Match Date",
-    "rarity": "Rarity"
-  },
-  "rarity": ["Common", "Rare", "Epic", "Legendary"],
-  "rarityToIndex": { "Common": 0, "Rare": 1, "Epic": 2, "Legendary": 3 },
-  "playTypes": [
-    "Wickets",
-    "Catch",
-    "Six",
-    "Four",
-    "Run Outs",
-    "Special Moments",
-    "Fielding",
-    "Others"
-  ],
-  "scanLinks": {
-    "56": "https://bscscan.com",
-    "97": "https://testnet.bscscan.com"
-  },
-  "gateways": [
-    "https://dweb.link",
-    "https://ipfs.io",
-    "https://cloudflare-ipfs.com",
-    "https://ipfs.azurewebsites.net",
-    "https://ipfs.infura.io",
-    "https://gateway.ipfs.io",
-    "https://gateway.pinata.cloud"
-  ]
+    },
+    "playFormProperties": {
+        "playName": "Play Name",
+        "description": "Description",
+        "playerName": "Player Name",
+        "teamName": "Team Name",
+        "opponentTeamName": "Opponent Team Name",
+        "season": "Season",
+        "playType": "Play Type",
+        "matchDate": "Match Date",
+        "rarity": "Rarity"
+    },
+    "rarity": [
+        "Common",
+        "Rare",
+        "Epic",
+        "Legendary"
+    ],
+    "rarityToIndex": {
+        "Common": 0,
+        "Rare": 1,
+        "Epic": 2,
+        "Legendary": 3
+    },
+    "playTypes": [
+        "Wickets",
+        "Catch",
+        "Six",
+        "Four",
+        "Run Outs",
+        "Special Moments",
+        "Fielding",
+        "Others"
+    ],
+    "scanLinks": {
+        "56": "https://bscscan.com",
+        "97": "https://testnet.bscscan.com"
+    },
+    "gateways": [
+        "https://dweb.link",
+        "https://ipfs.io",
+        "https://cloudflare-ipfs.com",
+        "https://ipfs.azurewebsites.net",
+        "https://ipfs.infura.io",
+        "https://gateway.ipfs.io",
+        "https://gateway.pinata.cloud"
+    ]
 }
