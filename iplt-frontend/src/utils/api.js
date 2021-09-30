@@ -1,4 +1,5 @@
 import { baseURL } from "./config";
+import { gateways } from "./constants.json";
 const axios = require("axios").default;
 
 export const getCall = async (endPoint, params, responseType = "application/json") => {
@@ -16,3 +17,10 @@ export const putCall = (endpoint, payload, config = {}) =>
 
 export const deleteCall = (endpoint, params = {}) =>
   axios.delete(`${baseURL}${endpoint}`, { data: params });
+
+export const fetchFromIpfs = async (cid) => {
+  return Promise.any(gateways.map(async (gateway) => {
+    const response = await axios.get(`${gateway}/ipfs/${cid}`, { responseType: "application/json" });
+    return response.data;
+  }));
+}

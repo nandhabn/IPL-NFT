@@ -1,17 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { selectContracts } from "../../app.selector";
-import { Row } from "antd";
+import { Row, Card } from "antd";
 import { CreateMomentSale } from "../TransferToken/createSale";
 import { isEmpty } from "lodash";
 import { useMetamask } from "use-metamask";
+import { PlayModal } from "../PlayModal/PlayModal";
+import { fetchFromIpfs } from "../../../utils/api";
+import { gateways } from "../../../utils/constants.json";
+const { Meta } = Card;
 
 export const DisplayMoments = () => {
   const contract = useSelector(selectContracts);
   const { metaState } = useMetamask();
 
   const [tokens, setTokens] = useState([]);
-
+  const [playData, setPlayData] = useState();
+  const [showPlayModal, setShowPlayModal] = useState(false);
   const getAllTokens = async () => {
     const balance = await contract.IPLM.balanceOf(metaState.account[0]);
     const tokens = Array.apply(null, Array(Number(balance._hex))).map(
@@ -20,11 +25,15 @@ export const DisplayMoments = () => {
           metaState.account[0],
           index
         );
-        const metaData = await contract.IPLM.getMomentById(tokenId);
+        const moment = await contract.IPLM.getMomentById(tokenId);
+        const play = await contract.IPLM.getPlayBy(moment[0]);
+        const cid = play[0].slice(7);
+        const data = await fetchFromIpfs(cid);
+        console.log(data);
         return {
           tokenId: Number(tokenId._hex),
-          metaData: metaData[1],
-          playerName: metaData["playerName"],
+          metaData: data,
+          playId: Number(moment[0]._hex),
         };
       }
     );
@@ -49,14 +58,24 @@ export const DisplayMoments = () => {
 
   return (
     <Row gutter={[8, 48]}>
-      {tokens.map((token) => (
-        <CreateMomentSale
-          imgSrc={token.metaData}
-          tokenId={token.tokenId}
-          playerName={token.playerName}
-          key={token.tokenId}
-        />
+      {tokens.map((token, index) => (
+        <Card
+          key={index}
+          hoverable
+          id={index}
+          onClick={() => {
+            setShowPlayModal(true);
+            setPlayData(token.metaData.properties);
+          }}
+          style={{ width: 240 }}
+          cover={<img alt={token.metaData.name} src={`${gateways[0]}/ipfs/${token.metaData.properties.image.slice(7)}`} />}
+        >
+          <Meta title={token.metaData.name} description={token.metaData.description} />
+          <p>{token.tokenId}</p>
+          <p>{token.playId}</p>
+        </Card>
       ))}
+      <PlayModal visible={showPlayModal} playData={playData} setShowPlayModal={setShowPlayModal} />
     </Row>
   );
 };
