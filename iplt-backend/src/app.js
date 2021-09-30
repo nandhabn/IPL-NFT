@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const database = require('./database');
 const eventListeners = require('./eventListeners');
+const cors = require('cors');
 
 // connect mongoose with mongo db server
 database.connect();
@@ -17,6 +18,7 @@ const usersRouter = require('./routes/users');
 
 const app = express();
 
+app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

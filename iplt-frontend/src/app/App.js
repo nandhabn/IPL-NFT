@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectContracts } from "./app.selector";
 import { isEmpty } from "lodash";
 import { CreatePacks } from "./container/CreatePacks/CreatePacks";
+import { PacksScreen } from "./container/Packs/Pack";
 
 const { Content, Sider, Header } = Layout;
 
@@ -33,9 +34,7 @@ const App = () => {
 
   useEffect(() => {
     const account0 = metaState.account[0];
-    setAddress(
-      account0 && `${account0.substring(2, 5)}...${account0.slice(-3)}`
-    );
+    setAddress(account0 && `${account0.substring(2, 5)}...${account0.slice(-3)}`);
     dispatch(fetchAccountDetails(metaState.account));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [metaState.account]);
@@ -76,12 +75,7 @@ const App = () => {
           <Row className="row justify-content-between">
             <div className="col-5">
               <p className="logo" style={{ color: "white", fontSize: "15px" }}>
-                <img
-                  alt=""
-                  src="../../public/IPL-Logo.png"
-                  style={{ width: "20px" }}
-                />{" "}
-                Moments
+                <img alt="" src="../../public/IPL-Logo.png" style={{ width: "20px" }} /> Moments
               </p>
             </div>
 
@@ -90,23 +84,18 @@ const App = () => {
                 <SigninButton
                   onClick={(e) => setShowWalletDetails(true)}
                   btnName={`${address}
-                  [${metaState.chain.name === "unknown"
+                  [${
+                    metaState.chain.name === "unknown"
                       ? metaState.chain.id === "97"
                         ? "bsc-test"
                         : "bsc-main"
                       : metaState.chain.name
-                    }]`}
+                  }]`}
                 />
               ) : (
-                <SigninButton
-                  onClick={connectMetamask}
-                  btnName="Connect Wallet"
-                />
+                <SigninButton onClick={connectMetamask} btnName="Connect Wallet" />
               )}
-              <WalletModal
-                setShow={setShowWalletDetails}
-                show={showWalletDetails}
-              />
+              <WalletModal setShow={setShowWalletDetails} show={showWalletDetails} />
             </div>
           </Row>
         </div>
@@ -121,6 +110,9 @@ const App = () => {
               <Menu.Item key="market">
                 <Link to={"/market"}>Market Place</Link>
               </Menu.Item>
+              <Menu.Item key="packs">
+                <Link to={"/packs"}>Packs</Link>
+              </Menu.Item>
               {isAdmin && (
                 <>
                   <Menu.Item key="mint">
@@ -133,16 +125,17 @@ const App = () => {
               )}
             </Menu>
           </Sider>
-          <Content style={{ margin: '0 16px' }}>
+          <Content style={{ margin: "0 16px" }}>
             <Switch>
               <Route path={"/home"} component={Home} />
               <Route path={"/market"} component={MarketPlace} />
-              {isAdmin &&
+              <Route path={"/packs"} component={PacksScreen} />
+              {isAdmin && (
                 <>
                   <Route path={"/mint"} component={MintToken} />
                   <Route path={"/createPack"} component={CreatePacks} />
                 </>
-              }
+              )}
             </Switch>
           </Content>
         </Router>
