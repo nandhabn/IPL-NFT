@@ -1,7 +1,13 @@
 const mongoose = require('mongoose');
 
 const pack = new mongoose.Schema({
-  cardsPerType: [{ tokenType: Number, tokensToMint: Number }],
+  packName: { type: String, required: true },
+  cardsPerType: [
+    {
+      tokenType: { type: Number, required: true },
+      tokensToMint: { type: Number, required: true },
+    },
+  ],
   price: { type: Number, min: 1 },
   __v: { type: Number, select: false },
 });

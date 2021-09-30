@@ -1,10 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-export const initialState = {};
+export const initialState = {
+  account: {},
+  provider: {},
+  contract: {},
+  tokenDetails: {},
+  file: {},
+  packDetails: {},
+};
 
 export const App = "app";
 
-const dealDetailsSlice = createSlice({
+const appSlice = createSlice({
   name: "app",
   initialState,
   reducers: {
@@ -29,14 +36,11 @@ const dealDetailsSlice = createSlice({
     setFile: (state, action) => {
       state.file = action.payload;
     },
-    fetchSigner: (state, action) => { },
-    setPackDetails: (state, action) => {
-      state.packDetails = action.payload;
-    }
+    fetchSigner: (state, action) => {},
   },
 });
 
-const { actions, reducer } = dealDetailsSlice;
+const { actions, reducer } = appSlice;
 
 export const {
   fetchAccountDetails,
@@ -47,7 +51,6 @@ export const {
   setTokenDetails,
   setFile,
   fetchSigner,
-  setPackDetails,
 } = actions;
 
 export const appReducer = reducer;

@@ -14,12 +14,7 @@
     "matchDate": "Match Date",
     "rarity": "Rarity"
   },
-  "rarity": [
-    "Common",
-    "Rare",
-    "Epic",
-    "Legendary"
-  ],
+  "rarity": ["Common", "Rare", "Epic", "Legendary"],
   "rarityToIndex": {
     "Common": 0,
     "Rare": 1,
@@ -48,5 +43,6 @@
     "https://ipfs.infura.io",
     "https://gateway.ipfs.io",
     "https://gateway.pinata.cloud"
-  ]
+  ],
+  "apiEndPoints": { "createPack": "/createPack" }
 }

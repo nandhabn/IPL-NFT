@@ -118,4 +118,4 @@ dist
 .pnp.*
 
 src/utils/contractIds.json
-src/contracts/*
+src/contracts/*.json
