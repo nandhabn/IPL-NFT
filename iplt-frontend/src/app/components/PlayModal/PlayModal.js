@@ -1,18 +1,23 @@
 import React from "react";
-import { Layout, Modal, Descriptions } from "antd";
-import { playFormProperties } from "../../../utils/constants.json";
+import { Modal } from "antd";
+import { gateways } from "../../../utils/constants.json";
 
 export const PlayModal = ({ visible, playData, setShowPlayModal }) => {
-  console.log(playData);
+  console.log(playData, "playdata");
 
   return (
     <Modal visible={visible} onCancel={() => setShowPlayModal(false)}>
       <div className="d-flex flex-row">
         <div className="row">
-          <div className="col-5">
-            <img src="https://ipfs.io/ipfs/bafybeiadyqwxvvlz4vizeizntyz6oz5zkmnyxrcwkdp3e2kvk36rlzr3ce/dhoni_card.jpg"></img>
-          </div>
           <div className="col-6">
+            <img
+              height="300px"
+              width="200px"
+              src={`${gateways[0]}/ipfs/${playData?.image?.slice(7)}`}
+              alt=""
+            ></img>
+          </div>
+          <div className="col-3 ms-5">
             {/* {
               playData && Object.entries(playData).map(([key, value]) => {
                 return (
@@ -24,16 +29,17 @@ export const PlayModal = ({ visible, playData, setShowPlayModal }) => {
                 )
               })
             } */}
-            {
-              playData &&
+            {playData.properties && (
               <>
-                <h4>{playData.playName}</h4>
-                <h6>{playData.description}</h6>
-                <p>Star player {playData.playerName}</p>
-                <p>{playData.teamName} vs {playData.opponentTeamName}</p>
-                <p>Match played on {playData.matchDate}</p>
+                <h4>{playData.properties.playName}</h4>
+                <h6>{playData.properties.description}</h6>
+                <p>Star player {playData.properties.playerName}</p>
+                <p>
+                  {playData.properties.teamName} vs {playData.properties.opponentTeamName}
+                </p>
+                {/* <p>Match played on {playData.matchDate}</p> */}
               </>
-            }
+            )}
           </div>
         </div>
       </div>

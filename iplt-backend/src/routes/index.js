@@ -2,7 +2,7 @@ const router = require('express').Router();
 
 const { buyTokens, getPacks, createPack } = require('./controller');
 
-router.put('/buyCard', buyTokens);
+router.put('/buyPack', buyTokens);
 
 router.get('/packs', getPacks);
 

@@ -3,6 +3,7 @@ const config = require('../utils/config');
 const { contractIds } = require('../utils/contractIds.json');
 const momentAbi = require('../contracts/IPLMoments.json');
 const tokenAbi = require('../contracts/IPLToken.json');
+const { wallet } = require('../utils/wallet');
 
 const provider = new ethers.providers.JsonRpcProvider({
   url: config.jsonRPCProvider,
@@ -10,4 +11,15 @@ const provider = new ethers.providers.JsonRpcProvider({
 const IPLM = new ethers.Contract(contractIds.IPLMoments, momentAbi, provider);
 const IPLT = new ethers.Contract(contractIds.IPLToken, tokenAbi, provider);
 
-module.exports = { IPLM, IPLT };
+const IPLMSigned = new ethers.Contract(
+  contractIds.IPLMoments,
+  momentAbi,
+  wallet.provider.getSigner()
+);
+const IPLTSigned = new ethers.Contract(
+  contractIds.IPLToken,
+  tokenAbi,
+  wallet.provider.getSigner()
+);
+
+module.exports = { IPLM, IPLT, IPLMSigned, IPLTSigned };
