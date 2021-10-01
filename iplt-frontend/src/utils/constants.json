@@ -44,5 +44,5 @@
     "https://gateway.ipfs.io",
     "https://gateway.pinata.cloud"
   ],
-  "apiEndPoints": { "createPack": "/createPack" }
+  "apiEndPoints": { "createPack": "/createPack", "getPacks": "/packs", "buyPack": "/buyPack" }
 }

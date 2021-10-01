@@ -16,7 +16,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectContracts } from "./app.selector";
 import { isEmpty } from "lodash";
 import { CreatePacks } from "./container/CreatePacks/CreatePacks";
-import { PacksScreen } from "./container/Packs/Pack";
 import { MyCollections } from "./container/MyCollections/MyCollections";
 
 const { Content, Sider, Header } = Layout;
@@ -85,12 +84,13 @@ const App = () => {
                 <SigninButton
                   onClick={(e) => setShowWalletDetails(true)}
                   btnName={`${address}
-                  [${metaState.chain.name === "unknown"
+                  [${
+                    metaState.chain.name === "unknown"
                       ? metaState.chain.id === "97"
                         ? "bsc-test"
                         : "bsc-main"
                       : metaState.chain.name
-                    }]`}
+                  }]`}
                 />
               ) : (
                 <SigninButton onClick={connectMetamask} btnName="Connect Wallet" />
@@ -110,9 +110,6 @@ const App = () => {
               <Menu.Item key="market">
                 <Link to={"/market"}>Market Place</Link>
               </Menu.Item>
-              <Menu.Item key="packs">
-                <Link to={"/packs"}>Packs</Link>
-              </Menu.Item>
               <Menu.Item key="my-collection">
                 <Link to={"/my-collection"}>My Collections</Link>
               </Menu.Item>
@@ -127,12 +124,11 @@ const App = () => {
                 </>
               )}
             </Menu>
-          </Sider >
+          </Sider>
           <Content style={{ margin: "0 16px" }}>
             <Switch>
               <Route path={"/home"} component={Home} />
               <Route path={"/market"} component={MarketPlace} />
-              <Route path={"/packs"} component={PacksScreen} />
               <Route path={"/my-collection"} component={MyCollections} />
               {isAdmin && (
                 <>
@@ -142,9 +138,9 @@ const App = () => {
               )}
             </Switch>
           </Content>
-        </Router >
-      </Layout >
-    </Layout >
+        </Router>
+      </Layout>
+    </Layout>
   );
 };
 
