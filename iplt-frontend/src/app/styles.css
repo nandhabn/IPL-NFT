@@ -1,78 +1,79 @@
 .signin {
-    background-color: #fef0e5;
-    width: fit-content;
-    padding: 8px;
-    border-color: #fef0e5;
-    border-radius: 1px;
-    color: #fb7000;
-    font-size: 14px;
-    font-weight: 600;
-    line-height: normal;
-    letter-spacing: normal;
-    cursor: pointer;
-  }
+  background-color: #fef0e5;
+  width: fit-content;
+  padding: 8px;
+  border-color: #fef0e5;
+  border-radius: 1px;
+  color: #fb7000;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: normal;
+  letter-spacing: normal;
+  cursor: pointer;
+}
 
-  .wallet {
-    width: 600px;
-    padding: 40px;
-    border-radius: 10px;
-    background-color: #ffffff;
-  }
+.wallet {
+  width: 600px;
+  padding: 40px;
+  border-radius: 10px;
+  background-color: #ffffff;
+}
 
-  .copy-address {
-    width: auto;
-    height: 44px;
-    padding: 10px 10px 10px 12px;
-    border-radius: 4px;
-    background-color: #f2f3f9;
-  }
-  
-  .view-on-screen a, .view-on-screen p {
-    color: #2e76f4;
-    font-weight: 600;
-  }
+.copy-address {
+  width: auto;
+  height: 44px;
+  padding: 10px 10px 10px 12px;
+  border-radius: 4px;
+  background-color: #f2f3f9;
+}
 
-  .modal-body p {
-    font-size: 14px;
-    font-weight: normal;
-    line-height: 22px;
-    letter-spacing: normal;
-    color: #4d555e;
-  }
-  .modal-body a {
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 600;
-    line-height: 18px;
-    letter-spacing: normal;
-  }
+.view-on-screen a,
+.view-on-screen p {
+  color: #2e76f4;
+  font-weight: 600;
+}
 
-  .modal-btn {
-    height: 44px;
-    background-color: #fef0e5;
-    border-color: #fef0e5;
-    color: #fb7000;
-    font-size: 14px;
-    font-weight: 600;
-    line-height: normal;
-    letter-spacing: normal;
-  }
-  
-  .close {
-    height: 44px;
-    border-radius: 8px;
-    border: solid 1px #202a36;
-    font-size: 14px;
-    font-weight: 600;
-    line-height: normal;
-    letter-spacing: normal;
-  }
+.modal-body p {
+  font-size: 14px;
+  font-weight: normal;
+  line-height: 22px;
+  letter-spacing: normal;
+  color: #4d555e;
+}
+.modal-body a {
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 18px;
+  letter-spacing: normal;
+}
 
-  .m-l-6 {
-    margin-left: 6px;
-  }  
-  
-  /* .signin:hover {
+.modal-btn {
+  height: 44px;
+  background-color: #fef0e5;
+  border-color: #fef0e5;
+  color: #fb7000;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: normal;
+  letter-spacing: normal;
+}
+
+.close {
+  height: 44px;
+  border-radius: 8px;
+  border: solid 1px #202a36;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: normal;
+  letter-spacing: normal;
+}
+
+.m-l-6 {
+  margin-left: 6px;
+}
+
+/* .signin:hover {
     background-color: #fb7000;
     border-color: #fdd4b2;
     color: #fef0e5;

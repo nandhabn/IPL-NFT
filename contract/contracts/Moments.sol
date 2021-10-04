@@ -29,8 +29,6 @@ contract IPLMoments is IERC721, MomentAccessControl {
   mapping(uint256 => address) private _tokenApprovals;
   mapping(address => mapping(address => bool)) private _operatorApprovals;
   mapping(uint256 => uint256) private momentSNCount;
-  mapping(address => uint256) private redeemCost;
-  mapping(address => uint256[]) private redeemMoments;
 
   uint16[4] _tokenType = [
     60000, // common
@@ -67,7 +65,7 @@ contract IPLMoments is IERC721, MomentAccessControl {
     require(tokenType < _tokenType.length);
     Play memory newPlay = Play({ url: _url, tokenType: tokenType });
     plays.push(newPlay);
-    uint256 newPlayID = plays.length;
+    uint256 newPlayID = plays.length - 1;
     emit playCreated(newPlayID, _url, tokenType);
     return newPlayID;
   }
@@ -81,7 +79,7 @@ contract IPLMoments is IERC721, MomentAccessControl {
 
     require(
       momentSNCountOf(playID) < _tokenType[play.tokenType],
-      "Invalid moment type"
+      "Cannot mint tokens more then the limit"
     );
 
     uint256 momentSerialNumber = momentSNCount[playID];
@@ -249,39 +247,6 @@ contract IPLMoments is IERC721, MomentAccessControl {
     uint256 tokenId,
     bytes calldata data
   ) public override {}
-
-  function mintAndTransferPack(
-    uint256[] memory playIDs,
-    uint256 packPrice,
-    address to
-  ) public onlyMinter returns (uint256[] memory) {
-    // require(_verify(_hash(playIDs), signature), "Invalid signature");
-    require(redeemCost[to] == 0);
-    uint256[] memory tokenIds = new uint256[](playIDs.length);
-    for (uint256 index = 0; index < playIDs.length; index++) {
-      uint256 newTokenId = _mint(playIDs[index]);
-      tokenIds[index] = newTokenId;
-    }
-    redeemCost[to] += packPrice + tx.gasprice;
-    redeemMoments[to] = tokenIds;
-    return tokenIds;
-  }
-
-  function getRedeemCost(address user) public view returns (uint256 cost) {
-    cost = redeemCost[user];
-  }
-
-  function redeemPack() public payable {
-    uint256 cost = redeemCost[_msgSender()];
-    require(cost <= msg.value, "redeem failed: insufficient balance");
-    require(payable(address(owner())).send(cost));
-    redeemCost[_msgSender()] -= cost;
-    uint256[] memory momentsToRedeem = redeemMoments[_msgSender()];
-    for (uint8 index = 0; index < momentsToRedeem.length; index++) {
-      _transfer(minter(), _msgSender(), momentsToRedeem[index]);
-    }
-    delete momentsToRedeem;
-  }
 
   function owner() public view override(Ownable) returns (address) {
     return super.owner();

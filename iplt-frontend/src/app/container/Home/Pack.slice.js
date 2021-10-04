@@ -26,12 +26,22 @@ const packsSlice = createSlice({
     buyPackFailed: (state, action) => {
       state.buyPackApi.err = action.payload;
     },
+    clearBuyPackData: (state, action) => {
+      state.buyPackApi = {};
+    },
   },
 });
 
 const { actions, reducer } = packsSlice;
 
-export const { getPacks, getPacksFailed, getPacksSuccess, buyPack, buyPackFailed, buyPackSuccess } =
-  actions;
+export const {
+  getPacks,
+  getPacksFailed,
+  getPacksSuccess,
+  buyPack,
+  buyPackFailed,
+  buyPackSuccess,
+  clearBuyPackData,
+} = actions;
 
 export const packsReducer = reducer;

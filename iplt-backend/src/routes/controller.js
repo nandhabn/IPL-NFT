@@ -14,7 +14,6 @@ exports.buyTokens = async (req, res, next) => {
       throw Error(errorMsg.packNotFound);
     }
 
-    console.log(pack);
     let plays = map(pack.cardsPerType, async ({ tokenType, tokensToMint }) => {
       const play = await Plays.aggregate([
         { $match: { tokenType } },
@@ -25,11 +24,15 @@ exports.buyTokens = async (req, res, next) => {
     });
 
     plays = flatten(await Promise.all(plays));
-    console.log(plays, pack.price, account);
 
+    if (isEmpty(plays)) {
+      throw new Error('No play is in sale');
+    }
+
+    console.log(plays, pack.price.toString(), account);
     const tx = await contracts.IPLMSigned.mintAndTransferPack(
       plays,
-      pack.price,
+      pack.price.toString(),
       account
     );
 
@@ -37,7 +40,7 @@ exports.buyTokens = async (req, res, next) => {
       .status(200)
       .json({ message: 'Pack minted successfully', txHash: tx.hash });
   } catch (err) {
-    console.log(err.message, 'sdjf');
+    console.log(err.message);
     return next(err.message);
   }
 };

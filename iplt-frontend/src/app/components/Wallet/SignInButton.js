@@ -20,10 +20,7 @@ const SigninButton = ({ onClick, btnName }) => {
   }, []);
 
   return (
-    <div
-      className="signin align-items-center justify-content-center d-flex"
-      onClick={onClick}
-    >
+    <div className="signin align-items-center justify-content-center d-flex" onClick={onClick}>
       <Row>
         <div ref={metamaskRef}></div>
         <div className="m-l-6">{btnName}</div>

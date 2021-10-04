@@ -8,6 +8,7 @@ import { configureAppStore } from "./store/configureStore";
 import "bootstrap/dist/css/bootstrap.css";
 import "antd/dist/antd.css";
 import { MetamaskStateProvider } from "use-metamask";
+import { BrowserRouter as Router } from "react-router-dom";
 
 const store = configureAppStore();
 
@@ -15,7 +16,9 @@ ReactDOM.render(
   <Provider store={store}>
     <React.StrictMode>
       <MetamaskStateProvider>
-        <App />
+        <Router>
+          <App />
+        </Router>
       </MetamaskStateProvider>
     </React.StrictMode>
   </Provider>,

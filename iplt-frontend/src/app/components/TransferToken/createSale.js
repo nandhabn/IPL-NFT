@@ -1,12 +1,11 @@
 import { Button, Card, Input, notification } from "antd";
-import { get, isEmpty, isNumber } from "lodash";
+import { isEmpty, isNumber } from "lodash";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { selectAccounts, selectContracts } from "../../app.selector";
+import { selectContracts } from "../../app.selector";
 
-export const CreateMomentSale = ({ imgSrc, tokenId, playerName }) => {
+export const CreateMomentSale = ({ tokenId }) => {
   const contract = useSelector(selectContracts);
-  const accounts = useSelector(selectAccounts);
   const [newSaleId, setSaleId] = useState();
   const [isLoading, setLoading] = useState(false);
   const [isSaleViewOpen, setSaleView] = useState(false);
@@ -25,16 +24,16 @@ export const CreateMomentSale = ({ imgSrc, tokenId, playerName }) => {
   const createSale = async () => {
     try {
       setLoading(true);
-      if (
-        isEmpty(contract.IPLM) ||
-        isEmpty(contract.IPLT) ||
-        isEmpty(get(accounts, "data")) ||
-        !isNumber(price)
-      ) {
+      if (isEmpty(contract.IPLM.signer)) {
+        openNotification("This action needs account. Please connect your wallet.");
+      }
+      if (!isNumber(price)) {
         return;
       }
-      const newSaleId = await contract.IPLM.createSale(tokenId, price);
-      setSaleId(newSaleId);
+      const tx = await contract.IPLM.createSale(tokenId, price);
+      contract.IPLM.on(tx.hash, () => {
+        openNotification("The moment is added to the sale");
+      });
     } catch (e) {
       openNotification(e.data?.message.split("revert")[1] ?? e.message);
       console.log(e.message);
@@ -65,30 +64,26 @@ export const CreateMomentSale = ({ imgSrc, tokenId, playerName }) => {
   }
 
   return (
-    <Card
-      cover={<img src={imgSrc} alt="" />}
-      className="p-3 m-2"
-      style={{ width: 300 }}
-    >
-      <div className="my-2">Player name: {playerName}</div>
+    <div className="col justify-content-end d-flex align-content-end">
       {isSaleViewOpen ? (
         <div className="col">
-          <div className="col">
-            <Input
-              onChange={validateInput}
-              type="number"
-              placeholder="Price"
-              min={0}
-            />
+          <div>
+            <Input onChange={validateInput} type="number" placeholder="Price" min={0} />
           </div>
-          <Button onClick={createSale}>Confirm</Button>
-          <Button onClick={() => openCloseSaleView(false)} danger>
-            Cancel
-          </Button>
+          <div className="justify-content-end d-flex mt-1 col">
+            <Button onClick={createSale} className="me-2">
+              Confirm
+            </Button>
+            <Button onClick={() => openCloseSaleView(false)} danger>
+              Cancel
+            </Button>
+          </div>
         </div>
       ) : (
-        <Button onClick={() => openCloseSaleView(true)}>Add to sale</Button>
+        <div className="d-flex justify-content-end col w-100">
+          <Button onClick={() => openCloseSaleView(true)}>Add to sale</Button>
+        </div>
       )}
-    </Card>
+    </div>
   );
 };

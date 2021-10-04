@@ -1,11 +1,7 @@
 import { Button, Card, Steps } from "antd";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  selectContracts,
-  selectFile,
-  selectTokenDetails,
-} from "../../app.selector";
+import { selectContracts, selectFile, selectTokenDetails } from "../../app.selector";
 import { NFTStorage } from "nft.storage";
 import { NFTStorage_APIKEY } from "../../../utils/config";
 import TokenDetails from "../Steps/TokenDetails/TokenDetails";
@@ -19,6 +15,7 @@ const { Step } = Steps;
 
 export const MintMoments = () => {
   const [current, setCurrent] = useState(0);
+  const [isLoading, setLoading] = useState();
   const tokenDetails = useSelector(selectTokenDetails);
   const file = useSelector(selectFile);
   const contract = useSelector(selectContracts);
@@ -55,6 +52,7 @@ export const MintMoments = () => {
   ];
 
   const storeNFTData = async () => {
+    setLoading(true);
     await checkContract();
     const nftStorageClient = new NFTStorage({ token: NFTStorage_APIKEY });
     const metaData = await nftStorageClient.store({
@@ -71,6 +69,8 @@ export const MintMoments = () => {
     const rarity = rarityToIndex[tokenDetails["rarity"]];
     const tx = await contract.IPLM.createPlay(url, rarity);
     console.log(tx);
+    window.location.reload();
+    setLoading(false);
   };
 
   return (
@@ -89,7 +89,7 @@ export const MintMoments = () => {
               </Button>
             )}
             {current === steps.length - 1 && (
-              <Button type="primary" onClick={storeNFTData}>
+              <Button type="primary" onClick={storeNFTData} loading={isLoading}>
                 Upload and Mint
               </Button>
             )}

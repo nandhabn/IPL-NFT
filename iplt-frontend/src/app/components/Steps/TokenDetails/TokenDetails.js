@@ -1,13 +1,4 @@
-import {
-  Input,
-  Row,
-  Col,
-  Form,
-  Select,
-  Radio,
-  DatePicker,
-  InputNumber,
-} from "antd";
+import { Input, Row, Col, Form, Select, Radio, DatePicker, InputNumber } from "antd";
 import { setTokenDetails } from "../../../App.slice";
 import { useDispatch } from "react-redux";
 // import locale from "antd/lib/date-picker/locale/en_GB";
@@ -22,12 +13,11 @@ const { Option } = Select;
 // ];
 
 const TokenDetails = () => {
-
   const dispatch = useDispatch();
 
   const onFieldsChange = (changed, all) => {
     dispatch(setTokenDetails(all));
-  }
+  };
 
   return (
     <div>
@@ -40,61 +30,45 @@ const TokenDetails = () => {
       >
         <Row>
           <Col span={11}>
-            {
-              Object.entries(playFormProperties).map(([key, value], index) => {
-                return (
-                  index < 5 && <Form.Item
-                    key={key}
-                    label={value}
-                    name={key}>
+            {Object.entries(playFormProperties).map(([key, value], index) => {
+              return (
+                index < 5 && (
+                  <Form.Item key={key} label={value} name={key}>
                     <Input placeholder={value} />
                   </Form.Item>
                 )
-              })
-            }
-
+              );
+            })}
           </Col>
           <Col span={11} offset={2}>
-
-            <Form.Item
-              name="playType"
-              label="Play Type">
+            <Form.Item name="playType" label="Play Type">
               {/* rules={rules}> */}
               <Select placeholder="Select Play Type">
-                {playTypes.map(playType => (
-                  <Option
-                    key={playType}
-                    value={playType}>
+                {playTypes.map((playType) => (
+                  <Option key={playType} value={playType}>
                     {playType}
                   </Option>
                 ))}
               </Select>
             </Form.Item>
 
-            <Form.Item
-              label="Ratity"
-              name="rarity">
+            <Form.Item label="Rarity" name="rarity">
               {/* rules={rules}> */}
               <Radio.Group>
-                {rarity.map(type => (
-                  <Radio.Button
-                    key={type}
-                    value={type}>{type}</Radio.Button>
+                {rarity.map((type) => (
+                  <Radio.Button key={type} value={type}>
+                    {type}
+                  </Radio.Button>
                 ))}
               </Radio.Group>
             </Form.Item>
 
-
-            <Form.Item
-              name="season"
-              label="Season">
+            <Form.Item name="season" label="Season">
               {/* rules={rules}> */}
               <InputNumber placeholder="Season" min="1" />
             </Form.Item>
 
-            <Form.Item
-              name="matchDate"
-              label="Match Date">
+            <Form.Item name="matchDate" label="Match Date">
               {/* rules={rules}> */}
               <DatePicker picker="date" />
             </Form.Item>
@@ -103,6 +77,6 @@ const TokenDetails = () => {
       </Form>
     </div>
   );
-}
+};
 
 export default TokenDetails;
