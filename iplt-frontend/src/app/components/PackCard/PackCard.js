@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Card, Skeleton } from "antd";
+import { Button, Card } from "antd";
 import { rarity } from "../../../utils/constants.json";
 
 export const PackCard = ({ pack, buyPack }) => {

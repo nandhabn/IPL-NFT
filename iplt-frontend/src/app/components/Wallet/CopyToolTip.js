@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Tooltip } from "antd";
-import copy from "../../../assets/icons/copy.svg"
+import copy from "../../../assets/icons/copy.svg";
 
 const CopyToolTip = ({ address }) => {
   const [message, setMessage] = useState("Copy To Clipboard");
@@ -18,9 +18,10 @@ const CopyToolTip = ({ address }) => {
         alt="copy"
         id={address}
         onClick={handleCopy}
-        onMouseLeave={() => { setMessage("Copy To Clipboard") }}
-      >
-      </img>
+        onMouseLeave={() => {
+          setMessage("Copy To Clipboard");
+        }}
+      ></img>
     </Tooltip>
   );
 };

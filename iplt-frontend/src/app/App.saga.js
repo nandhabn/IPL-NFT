@@ -17,11 +17,7 @@ import { get } from "lodash/get";
 function* fetchcontracts({ payload: accounts }) {
   try {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const IPLM = new ethers.Contract(
-      contractIds.IPLMoments,
-      momentAbi,
-      provider
-    );
+    const IPLM = new ethers.Contract(contractIds.IPLMoments, momentAbi, provider);
     const IPLT = new ethers.Contract(contractIds.IPLToken, tokenAbi, provider);
     yield put(setProvider(provider));
     yield put(setContracts({ IPLM, IPLT }));

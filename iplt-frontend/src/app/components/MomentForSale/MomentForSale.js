@@ -2,7 +2,7 @@ import { Button, Card, Row } from "antd";
 import { isEmpty } from "lodash";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { selectAccounts, selectContracts } from "../../app.selector";
+import { selectContracts } from "../../app.selector";
 import { notification } from "antd";
 import { BuyMomentOrEndSale } from "../TransferToken/BuyMoment";
 import { Link } from "react-router-dom";

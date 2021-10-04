@@ -19,8 +19,12 @@ export const deleteCall = (endpoint, params = {}) =>
   axios.delete(`${baseURL}${endpoint}`, { data: params });
 
 export const fetchFromIpfs = async (cid) => {
-  return Promise.any(gateways.map(async (gateway) => {
-    const response = await axios.get(`${gateway}/ipfs/${cid}`, { responseType: "application/json" });
-    return response.data;
-  }));
-}
+  return Promise.any(
+    gateways.map(async (gateway) => {
+      const response = await axios.get(`${gateway}/ipfs/${cid}`, {
+        responseType: "application/json",
+      });
+      return response.data;
+    })
+  );
+};
