@@ -3,12 +3,15 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useInjectReducer, useInjectSaga } from "redux-injectors";
 import { PackCard } from "../../components/PackCard/PackCard";
-import { buyPack, getPacks, packsReducer } from "./Pack.slice";
+import { buyPack, clearBuyPackData, getPacks, packsReducer } from "./Pack.slice";
 import { packsSaga } from "./Packs.saga";
 import { selectBuyPack, selectPacks } from "./Packs.selector";
 import { selectContracts } from "../../app.selector";
 import { useMetamask } from "use-metamask";
-import { DisplayMoments } from "../../components/DisplayMoments/DisplayMoments";
+import { useHistory } from "react-router";
+import { contractIds } from "../../../utils/constants.json";
+import { ethers } from "ethers";
+import { notification } from "antd";
 
 export const Home = () => {
   useInjectReducer({ key: "packs", reducer: packsReducer });
@@ -21,6 +24,7 @@ export const Home = () => {
   const packs = useSelector(selectPacks);
   const buyPackRes = useSelector(selectBuyPack);
   const contracts = useSelector(selectContracts);
+  const history = useHistory();
 
   const dispatch = useDispatch();
 
@@ -28,9 +32,16 @@ export const Home = () => {
     dispatch(getPacks());
   }, [dispatch]);
 
+  useEffect(
+    () => () => {
+      dispatch(clearBuyPackData());
+    },
+    [dispatch]
+  );
+
   useEffect(() => {
     if (get(packs, "err")) {
-      setPackError("Failed to fetch packs");
+      openNotification("Failed to fetch packs");
     }
     if (get(packs, "data")) {
       setPackList(get(packs, "data.packs"));
@@ -39,11 +50,19 @@ export const Home = () => {
 
   const redeemPack = useCallback(
     async (cost) => {
-      const tx = await contracts.IPLM.redeemPack({ value: cost });
+      const allowance = await contracts.IPLT.allowance(
+        metaState.account[0],
+        contractIds.IPLMoments
+      );
+      if (allowance < cost["packCost"]) {
+        await contracts.IPLT.approve(contractIds.IPLMoments, cost["packCost"]);
+      }
+      const tx = await contracts.IPLM.redeemPack({ value: cost["gasCost"] });
       contracts.IPLM.provider.once(tx.hash, () => {
-        console.log("Done");
+        history.push("/my-collection");
       });
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [contracts?.IPLM]
   );
 
@@ -55,27 +74,44 @@ export const Home = () => {
   }, [buyPackRes, contracts?.IPLM, metaState.account, redeemPack]);
 
   useEffect(() => {
-    redeemPackUseEffect();
+    if (!isEmpty(buyPackRes)) {
+      redeemPackUseEffect();
+    }
   }, [buyPackRes, redeemPackUseEffect, metaState.account]);
 
   const buyPacks = useCallback(
-    async (packId) => {
-      if (!isEmpty(metaState.account)) {
-        const redeemCost = await contracts.IPLM.getRedeemCost(metaState.account[0]);
-        console.log(redeemCost);
-        if (Number(redeemCost._hex) === 0) {
-          return dispatch(buyPack({ packId, account: metaState.account[0] }));
-        } else {
-          redeemPack(redeemCost);
+    async (packId, price) => {
+      try {
+        if (!isEmpty(metaState.account)) {
+          const redeemCost = await contracts.IPLM.getRedeemCost(metaState.account[0]);
+          const IPLTBal = await contracts.IPLT.balanceOf(metaState.account[0]);
+          console.log(redeemCost, IPLTBal);
+          if (IPLTBal < price) {
+            openNotification("Insufficient IPLT tokens");
+            return;
+          }
+
+          if (Number(redeemCost["gasCost"]._hex) === 0) {
+            return dispatch(buyPack({ packId, account: metaState.account[0], IPLTBal }));
+          } else {
+            redeemPack(redeemCost);
+          }
         }
+      } catch (e) {
+        openNotification(e?.data.message.split("revert")[1] ?? e.message);
       }
     },
-    [metaState.account, contracts?.IPLM, dispatch, redeemPack]
+    [metaState.account, contracts?.IPLM, contracts?.IPLT, dispatch, redeemPack]
   );
+
+  const openNotification = (message) => {
+    notification.open({
+      message,
+    });
+  };
 
   return (
     <div className="d-flex flex-column">
-      <DisplayMoments />
       <div
         style={{ height: "auto" }}
         className="d-flex justify-content-around align-content-center flex-wrap overflow-auto row"

@@ -16,6 +16,10 @@ contract MomentSale is IPLMoments {
   Sale[] private sales;
   IBEP20 IPLT;
 
+  mapping(address => uint256) private redeemGasCost;
+  mapping(address => uint256) private redeemPackCost;
+  mapping(address => uint256[]) private redeemMoments;
+
   event momentSold(address from, address to, uint256 tokenId);
 
   constructor(address contractAddress) {
@@ -93,5 +97,57 @@ contract MomentSale is IPLMoments {
 
   function totalSales() public view returns (uint256) {
     return sales.length;
+  }
+
+  function getRedeemCost(address user)
+    public
+    view
+    returns (uint256 gasCost, uint256 packCost)
+  {
+    gasCost = redeemGasCost[user];
+    packCost = redeemPackCost[user];
+  }
+
+  function redeemPack() public payable {
+    uint256 gasCost = redeemGasCost[_msgSender()];
+    uint256 packCost = redeemPackCost[_msgSender()];
+
+    require(gasCost <= msg.value, "redeem failed: insufficient balance");
+    require(
+      packCost <= IPLT.balanceOf(_msgSender()),
+      "redeem failed: insufficient balance"
+    );
+
+    require(payable(address(owner())).send(gasCost));
+    require(
+      IPLT.allowance(_msgSender(), address(this)) >= packCost,
+      "Allowance is less than "
+    );
+    IPLT.transferFrom(_msgSender(), owner(), packCost);
+
+    redeemGasCost[_msgSender()] = 0;
+    redeemPackCost[_msgSender()] = 0;
+    uint256[] memory momentsToRedeem = redeemMoments[_msgSender()];
+    for (uint8 index = 0; index < momentsToRedeem.length; index++) {
+      _transfer(minter(), _msgSender(), momentsToRedeem[index]);
+    }
+    delete momentsToRedeem;
+  }
+
+  function mintAndTransferPack(
+    uint256[] memory playIDs,
+    uint256 packPrice,
+    address to
+  ) public onlyMinter returns (uint256[] memory) {
+    require(redeemGasCost[to] == 0, "Finish previous transation");
+    uint256[] memory tokenIds = new uint256[](playIDs.length);
+    for (uint256 index = 0; index < playIDs.length; index++) {
+      uint256 newTokenId = _mint(playIDs[index]);
+      tokenIds[index] = newTokenId;
+    }
+    redeemPackCost[to] += packPrice;
+    redeemMoments[to] = tokenIds;
+    redeemGasCost[to] += tx.gasprice;
+    return tokenIds;
   }
 }

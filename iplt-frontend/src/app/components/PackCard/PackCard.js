@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Card } from "antd";
+import { Button, Card, Skeleton } from "antd";
 import { rarity } from "../../../utils/constants.json";
 
 export const PackCard = ({ pack, buyPack }) => {
@@ -28,7 +28,7 @@ export const PackCard = ({ pack, buyPack }) => {
             {pack.packName}
           </div>
           <div
-            className="py-4 d-flex justify-content-center align-item-center fs-2"
+            className="py-4 d-flex justify-content-center align-items-center fs-4"
             style={{ backgroundColor: "#ecf0f1" }}
           >
             {pack.price} IPLT
@@ -42,7 +42,7 @@ export const PackCard = ({ pack, buyPack }) => {
             ))}
           </div>
           <div className="py-4 justify-content-center align-self-end d-flex" style={{ bottom: 0 }}>
-            <Button onClick={() => buyPack(pack._id)}>Buy Now</Button>
+            <Button onClick={() => buyPack(pack._id, pack.price)}>Buy Now</Button>
           </div>
         </div>
       </div>

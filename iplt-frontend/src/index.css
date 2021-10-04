@@ -1,6 +1,7 @@
 .App {
   height: 100vh;
   overflow: hidden;
+  font-family: "Roboto", sans-serif;
 }
 
 input[type="number"]::-webkit-inner-spin-button,
