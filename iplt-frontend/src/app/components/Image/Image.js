@@ -7,6 +7,7 @@ export const Image = (props) => {
   return (
     <div className="d-flex justify-content-center align-items-center">
       {isLoading && <Spin />}
+      {/* eslint-disable-next-line jsx-a11y/alt-text */}
       <img {...props} onLoad={() => setLoading(false)} />
     </div>
   );

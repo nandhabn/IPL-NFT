@@ -90,7 +90,7 @@ const App = () => {
           <Row className="row justify-content-between">
             <div className="col-5">
               <p className="logo" style={{ color: "white", fontSize: "15px" }}>
-                IPL Moments
+                IPL Moments{isAdmin && " Admin Dashboard"}
               </p>
             </div>
 
