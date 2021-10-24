@@ -10,7 +10,6 @@ import { selectContracts } from "../../app.selector";
 import { useMetamask } from "use-metamask";
 import { useHistory } from "react-router";
 import { contractIds } from "../../../utils/constants.json";
-import { ethers } from "ethers";
 import { notification } from "antd";
 
 export const Home = () => {
@@ -18,7 +17,7 @@ export const Home = () => {
   useInjectSaga({ key: "packs", saga: packsSaga });
 
   const { metaState } = useMetamask();
-  const [packError, setPackError] = useState("");
+  const [packError] = useState("");
   const [packList, setPackList] = useState([]);
 
   const packs = useSelector(selectPacks);

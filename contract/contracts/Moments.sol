@@ -3,10 +3,13 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol";
 
 import "./MomentAccessControl.sol";
 
-contract IPLMoments is IERC721, MomentAccessControl {
+contract IPLMoments is IERC721, IERC721Metadata, MomentAccessControl {
+  using Address for address;
+
   string public _name = "IPLMoments";
   string public _symbol = "IPLM";
 
@@ -41,12 +44,17 @@ contract IPLMoments is IERC721, MomentAccessControl {
 
   event momentCreated(uint256 playID, uint256 serialNumber, uint256 momentID);
 
-  function name() public view returns (string memory) {
+  function name() public view override returns (string memory) {
     return _name;
   }
 
-  function symbol() public view returns (string memory) {
+  function symbol() public view override returns (string memory) {
     return _symbol;
+  }
+
+  function tokenURI(uint256 tokenId) public view override returns (string memory url) {
+    uint256 playId = getMomentById(tokenId).playID;
+    url = getPlayBy(playId).url;
   }
 
   function getPlayBy(uint256 playID) public view returns (Play memory play) {
@@ -204,8 +212,15 @@ contract IPLMoments is IERC721, MomentAccessControl {
     address _to,
     uint256 _tokenId
   ) external virtual override {
+    require(_from != address(0));
     require(_to != address(0));
+    require(ownerOf(_tokenId) == _from);
+
     transferFrom(_from, _to, _tokenId);
+
+    if (_to.isContract()) {
+      IERC721Receiver(_to).onERC721Received(_to, _from, _tokenId, "");
+    }
   }
 
   function transferFrom(
