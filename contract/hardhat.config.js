@@ -1,9 +1,13 @@
 require("@nomiclabs/hardhat-waffle");
+require("dotenv").config();
 
-module.exports = {
+/**
+ * @type {import("hardhat/types").HardhatConfig}
+ */
+const config = {
   defaultNetwork: "localhost",
   solidity: {
-    version: "0.8.0",
+    version: "0.8.17",
     settings: {
       optimizer: {
         enabled: true,
@@ -11,12 +15,21 @@ module.exports = {
       },
     },
   },
-  network: {
+  networks: {
     localhost: {
       url: "http://127.0.0.1:7545",
+    },
+    sepolia: {
+      url: "https://rpc.sepolia.org/",
+      gas: 14,
+      accounts: {
+        mnemonic: process.env.MNEMONIC,
+      },
     },
   },
   mocha: {
     timeout: 20000,
   },
 };
+
+module.exports = config;
